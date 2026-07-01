@@ -1,0 +1,24 @@
+{
+  "name": "com.deucarian.camera-navigation",
+  "version": "0.1.0",
+  "displayName": "Deucarian Camera Navigation",
+  "description": "Reusable camera pose, framing, transition, orbit, fly, top-down, and waypoint navigation primitives.",
+  "unity": "2022.3",
+  "author": {
+    "name": "Deucarian"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deucarian/Camera-Navigation.git"
+  },
+  "keywords": [
+    "deucarian",
+    "camera",
+    "navigation",
+    "orbit",
+    "waypoints"
+  ],
+  "dependencies": {
+    "com.deucarian.common": "0.2.0"
+  }
+}

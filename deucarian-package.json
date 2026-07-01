@@ -1,0 +1,22 @@
+{
+  "packageId": "com.deucarian.camera-navigation",
+  "displayName": "Deucarian Camera Navigation",
+  "ownedCapabilities": [
+    "camera-navigation"
+  ],
+  "runtimeAssemblies": [
+    "Deucarian.CameraNavigation"
+  ],
+  "editorAssemblies": [],
+  "sampleAssemblies": [],
+  "testAssemblies": [
+    "Deucarian.CameraNavigation.Tests.EditMode"
+  ],
+  "requiredDependencies": [
+    "com.deucarian.common"
+  ],
+  "optionalVersionDefinedDependencies": [],
+  "allowedDirectDebugCalls": [],
+  "allowedDirectUnityObjectLifetimeCalls": [],
+  "expectedSamplesRoot": ""
+}
