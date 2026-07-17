@@ -1,6 +1,6 @@
 {
   "name": "com.deucarian.camera-navigation",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "Deucarian Camera Navigation",
   "description": "Reusable camera pose, framing, transition, orbit, fly, top-down, and waypoint navigation primitives.",
   "unity": "2022.3",
@@ -19,6 +19,13 @@
     "waypoints"
   ],
   "dependencies": {
-    "com.deucarian.common": "0.2.0"
-  }
+    "com.deucarian.common": "0.2.1"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Navigation",
+      "description": "Starting scene showing camera navigation and top-down framing.",
+      "path": "Samples~/Basic Navigation"
+    }
+  ]
 }
