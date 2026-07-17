@@ -1,0 +1,6 @@
+{
+  "name": "Deucarian.CameraNavigation.Samples.BasicNavigation",
+  "rootNamespace": "Deucarian.CameraNavigation.Samples",
+  "references": ["Deucarian.CameraNavigation"],
+  "autoReferenced": false
+}

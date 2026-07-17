@@ -1,6 +1,7 @@
 {
   "packageId": "com.deucarian.camera-navigation",
   "displayName": "Deucarian Camera Navigation",
+  "samplePolicy": "playable-scene",
   "ownedCapabilities": [
     "camera-navigation"
   ],
@@ -8,7 +9,9 @@
     "Deucarian.CameraNavigation"
   ],
   "editorAssemblies": [],
-  "sampleAssemblies": [],
+  "sampleAssemblies": [
+    "Deucarian.CameraNavigation.Samples.BasicNavigation"
+  ],
   "testAssemblies": [
     "Deucarian.CameraNavigation.Tests.EditMode"
   ],
@@ -18,5 +21,5 @@
   "optionalVersionDefinedDependencies": [],
   "allowedDirectDebugCalls": [],
   "allowedDirectUnityObjectLifetimeCalls": [],
-  "expectedSamplesRoot": ""
+  "expectedSamplesRoot": "Samples~"
 }
