@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.5 - 2026-07-23
+
+- Promoted the user-tuned Report Viewer Orbit and Fly profile to the package
+  defaults used by new assets, runtime fallback controls, and reset actions.
+- Added regression coverage for every raw profile value and its effective
+  globally scaled navigation channels.
+
 ## 0.2.4 - 2026-07-23
 
 - Exposed adjustable global sensitivity through an abstract controls contract.

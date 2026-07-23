@@ -49,14 +49,14 @@ namespace Deucarian.CameraNavigation.Editor
                 DeucarianEditorChrome.DrawPackageHeader(
                     "camera",
                     "Camera Navigation",
-                    "Configure the complete Orbit and Fly profile with the proven legacy Report Viewer feel.");
+                    "Configure the complete Orbit and Fly profile with the approved Deucarian feel.");
 
                 DrawProjectControls();
                 DrawNavigationProfile();
 
                 DeucarianEditorChrome.DrawFooterVersion(
                     "com.deucarian.camera-navigation",
-                    "0.2.4");
+                    "0.2.5");
                 EditorGUILayout.EndScrollView();
             }
         }
@@ -121,8 +121,8 @@ namespace Deucarian.CameraNavigation.Editor
 
             GUILayout.Space(DeucarianEditorWorkbenchGUI.PanelSpacing);
             DeucarianEditorSettingsActions.DrawResetToDefaultsButton(
-                RestoreLegacyDefaults,
-                "Restore the legacy Report Viewer Orbit and Fly defaults.");
+                RestoreApprovedDefaults,
+                "Restore the approved Deucarian Orbit and Fly defaults.");
 
             DeucarianEditorChrome.EndSection();
         }
@@ -167,7 +167,7 @@ namespace Deucarian.CameraNavigation.Editor
             }
         }
 
-        private void RestoreLegacyDefaults()
+        private void RestoreApprovedDefaults()
         {
             if (controls == null)
             {
