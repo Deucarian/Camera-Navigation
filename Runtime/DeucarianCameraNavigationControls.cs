@@ -20,15 +20,15 @@ namespace Deucarian.CameraNavigation
         public const float DefaultOrbitMousePanSpeed = 0.0025f;
         public const float DefaultOrbitOrthographicMousePanSpeed = 0.003f;
         public const float DefaultOrbitRotationSpeed = 0.25f;
-        public const float DefaultOrbitRotationSensitivity = 10f;
-        public const float DefaultOrbitPanSensitivity = 10f;
+        public const float DefaultOrbitRotationSensitivity = 0.45f;
+        public const float DefaultOrbitPanSensitivity = 1.4f;
         public const float DefaultOrbitZoomSensitivity = 1f;
         public const float DefaultOrbitMinimumDistance = 0.0001f;
         public const float DefaultOrbitMinimumDistanceScale = 0.00001f;
         public const float DefaultOrbitNearClipDistanceMultiplier = 1.1f;
         public const float DefaultFlyMoveSpeed = 8f;
         public const float DefaultFlyRotationSpeed = 0.18f;
-        public const float DefaultFlyLookSensitivity = 10f;
+        public const float DefaultFlyLookSensitivity = 1.35f;
         public const float DefaultFlyMoveSensitivity = 1f;
         public const float DefaultFlyZoomSensitivity = 1f;
 

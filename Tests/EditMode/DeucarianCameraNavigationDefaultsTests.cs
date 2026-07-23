@@ -33,10 +33,10 @@ namespace Deucarian.CameraNavigation.Tests
                     Is.EqualTo(0.25f).Within(Tolerance));
                 Assert.That(
                     controls.OrbitRotationSensitivity,
-                    Is.EqualTo(10f).Within(Tolerance));
+                    Is.EqualTo(0.45f).Within(Tolerance));
                 Assert.That(
                     controls.OrbitPanSensitivity,
-                    Is.EqualTo(10f).Within(Tolerance));
+                    Is.EqualTo(1.4f).Within(Tolerance));
                 Assert.That(
                     controls.OrbitZoomSensitivity,
                     Is.EqualTo(1f).Within(Tolerance));
@@ -50,7 +50,7 @@ namespace Deucarian.CameraNavigation.Tests
                     Is.EqualTo(0.18f).Within(Tolerance));
                 Assert.That(
                     controls.FlyLookSensitivity,
-                    Is.EqualTo(10f).Within(Tolerance));
+                    Is.EqualTo(1.35f).Within(Tolerance));
                 Assert.That(
                     controls.FlyMoveSensitivity,
                     Is.EqualTo(1f).Within(Tolerance));
@@ -93,7 +93,7 @@ namespace Deucarian.CameraNavigation.Tests
 
                 Assert.That(
                     controls.OrbitRotationSensitivity,
-                    Is.EqualTo(10f).Within(Tolerance));
+                    Is.EqualTo(0.45f).Within(Tolerance));
                 Assert.That(
                     controls.FlyMoveSpeed,
                     Is.EqualTo(8f).Within(Tolerance));

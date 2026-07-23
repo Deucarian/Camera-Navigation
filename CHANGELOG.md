@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3 - 2026-07-23
+
+- Restored the Report Viewer's actual pre-extraction Orbit rotation, Orbit pan,
+  and Fly look sensitivity defaults instead of using raw input constants.
+
 ## 0.2.2 - 2026-07-23
 
 - Rebuilt the Camera Navigation settings window with the shared Deucarian
