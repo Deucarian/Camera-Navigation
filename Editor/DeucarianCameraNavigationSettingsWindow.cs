@@ -1,3 +1,4 @@
+using Deucarian.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -40,12 +41,30 @@ namespace Deucarian.CameraNavigation.Editor
 
         private void OnGUI()
         {
-            EditorGUILayout.LabelField(
-                "Camera Navigation",
-                EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(
-                "Configure the complete Orbit and Fly speed profile used by Deucarian Camera Navigation. New assets start with the proven legacy Report Viewer feel.",
-                MessageType.Info);
+            using (DeucarianEditorWorkbenchPanelScope page =
+                   DeucarianEditorWorkbenchGUI.BeginSettingsPage(
+                       GUILayout.ExpandHeight(true)))
+            {
+                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+                DeucarianEditorChrome.DrawPackageHeader(
+                    "camera",
+                    "Camera Navigation",
+                    "Configure the complete Orbit and Fly profile with the proven legacy Report Viewer feel.");
+
+                DrawProjectControls();
+                DrawNavigationProfile();
+
+                DeucarianEditorChrome.DrawFooterVersion(
+                    "com.deucarian.camera-navigation",
+                    "0.2.2");
+                EditorGUILayout.EndScrollView();
+            }
+        }
+
+        private void DrawProjectControls()
+        {
+            DeucarianEditorChrome.DrawSectionHeader("Project Controls");
+            DeucarianEditorChrome.BeginSection();
 
             DeucarianCameraNavigationControls selected =
                 (DeucarianCameraNavigationControls)EditorGUILayout.ObjectField(
@@ -58,18 +77,41 @@ namespace Deucarian.CameraNavigation.Editor
                 SelectControls(selected);
             }
 
+            if (controls == null)
+            {
+                DeucarianEditorWorkbenchGUI.DrawStatusIconRow(
+                    "circle-alert",
+                    "No controls asset is selected.",
+                    DeucarianEditorStatus.Warning);
+            }
+            else
+            {
+                DeucarianEditorWorkbenchGUI.DrawStatusIconRow(
+                    "circle-check",
+                    AssetDatabase.GetAssetPath(controls) == CanonicalControlsAssetPath
+                        ? "The canonical project controls asset is active."
+                        : "A project controls asset is selected.",
+                    DeucarianEditorStatus.Success);
+            }
+
             DrawAssetActions();
-            EditorGUILayout.Space();
+            DeucarianEditorChrome.EndSection();
+        }
+
+        private void DrawNavigationProfile()
+        {
+            DeucarianEditorChrome.DrawSectionHeader("Navigation Profile");
+            DeucarianEditorChrome.BeginSection();
 
             if (controls == null || serializedControls == null)
             {
                 EditorGUILayout.HelpBox(
                     "Create or select a controls asset to edit navigation values.",
-                    MessageType.Warning);
+                    MessageType.Info);
+                DeucarianEditorChrome.EndSection();
                 return;
             }
 
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             serializedControls.Update();
             DrawControlProperties(serializedControls);
             if (serializedControls.ApplyModifiedProperties())
@@ -77,16 +119,12 @@ namespace Deucarian.CameraNavigation.Editor
                 EditorUtility.SetDirty(controls);
             }
 
-            EditorGUILayout.Space();
-            if (GUILayout.Button("Restore Legacy Defaults"))
-            {
-                Undo.RecordObject(controls, "Restore Camera Navigation Defaults");
-                controls.ResetToDefaults();
-                EditorUtility.SetDirty(controls);
-                serializedControls.Update();
-            }
+            GUILayout.Space(DeucarianEditorWorkbenchGUI.PanelSpacing);
+            DeucarianEditorSettingsActions.DrawResetToDefaultsButton(
+                RestoreLegacyDefaults,
+                "Restore the legacy Report Viewer Orbit and Fly defaults.");
 
-            EditorGUILayout.EndScrollView();
+            DeucarianEditorChrome.EndSection();
         }
 
         private static void DrawControlProperties(SerializedObject serializedObject)
@@ -109,20 +147,37 @@ namespace Deucarian.CameraNavigation.Editor
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Create Project Controls"))
+                if (GUILayout.Button(
+                    "Create Project Controls",
+                    DeucarianEditorWorkbenchGUI.PrimaryButtonStyle))
                 {
                     SelectControls(CreateProjectControls());
                 }
 
                 using (new EditorGUI.DisabledScope(controls == null))
                 {
-                    if (GUILayout.Button("Select Asset"))
+                    if (GUILayout.Button(
+                        "Select Asset",
+                        DeucarianEditorWorkbenchGUI.SecondaryButtonStyle))
                     {
                         Selection.activeObject = controls;
                         EditorGUIUtility.PingObject(controls);
                     }
                 }
             }
+        }
+
+        private void RestoreLegacyDefaults()
+        {
+            if (controls == null)
+            {
+                return;
+            }
+
+            Undo.RecordObject(controls, "Restore Camera Navigation Defaults");
+            controls.ResetToDefaults();
+            EditorUtility.SetDirty(controls);
+            serializedControls.Update();
         }
 
         private void SelectControls(DeucarianCameraNavigationControls selected)

@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.1`.
+Current package version: `0.2.2`.
 
 ## When to use it
 
@@ -112,6 +112,8 @@ move the camera through its pivot.
 Works with:
 
 - `com.deucarian.common` for approved shared runtime primitives.
+- `com.deucarian.editor` for the shared editor-only Camera Navigation settings
+  surface.
 
 Optional integrations:
 

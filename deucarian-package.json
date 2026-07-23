@@ -18,7 +18,8 @@
     "Deucarian.CameraNavigation.Tests.EditMode"
   ],
   "requiredDependencies": [
-    "com.deucarian.common"
+    "com.deucarian.common",
+    "com.deucarian.editor"
   ],
   "optionalVersionDefinedDependencies": [],
   "allowedDirectDebugCalls": [],
