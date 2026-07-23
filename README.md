@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.1.1`.
+Current package version: `0.2.0`.
 
 ## When to use it
 
@@ -72,7 +72,8 @@ public sealed class CameraNavigationExample : MonoBehaviour
 
 ## Samples
 
-This package does not currently ship `Samples~` content.
+Import the **Basic Navigation** sample through Unity Package Manager for a
+starting scene with camera navigation and top-down framing.
 
 ## Public API map
 
@@ -80,7 +81,25 @@ This package does not currently ship `Samples~` content.
 - `DeucarianCameraMotionSettings`: transition speed, duration, projection-match field of view, and movement/rotation easing curves.
 - `DeucarianCameraFraming`: bounds framing, top-down pose, projection matching, and clip-plane helpers.
 - `DeucarianCameraNavigator`: cancellable move-to-pose, move-to-origin, top-down, and waypoint movement host.
-- `DeucarianOrbitCameraController` and `DeucarianFlyCameraController`: input-agnostic camera control primitives.
+- `DeucarianOrbitCameraController`: pivot-safe Orbit rotation, pan, movement, and smooth perspective/orthographic zoom.
+- `DeucarianFlyCameraController`: Fly look, movement, modifiers, and smooth wheel dolly.
+- `DeucarianCameraNavigationControls`: configurable sensitivities, smoothing, and Orbit minimum-distance policy.
+- `IDeucarianCameraNavigationControls`: settings boundary for application-owned
+  navigation control assets.
+- `DeucarianOrbitCameraInput` and `DeucarianFlyCameraInput`: normalized input values for any input backend.
+
+### Orbit minimum distance
+
+Perspective Orbit distance is clamped to the largest of:
+
+- The configurable absolute minimum distance.
+- Camera near clip plane multiplied by the configurable safety factor.
+- Reference model radius multiplied by the configurable scale factor.
+
+Call `SetReferenceBounds` or `SetReferenceScale` when content changes. This lets
+small models zoom much closer while large models retain a stable scale-aware
+safety floor. Orthographic navigation changes `orthographicSize` and does not
+move the camera through its pivot.
 
 ## Integrations
 
@@ -90,7 +109,8 @@ Works with:
 
 Optional integrations:
 
-- None.
+- `com.deucarian.camera-navigation.input-system-integration` for configurable
+  Unity Input System mouse/keyboard sources and a ready-to-use Orbit/Fly rig.
 
 Does not own:
 
@@ -104,6 +124,8 @@ Does not own:
 - If `MoveToTopDown` does nothing, confirm the navigator has a target camera or the scene has a tagged `MainCamera`.
 - If movement snaps, check whether the scene is in Edit Mode or the motion settings calculate a zero-duration transition.
 - If framing looks too tight, pass a larger padding value to `DeucarianCameraFraming` helpers before moving to the pose.
+- If Orbit stops sooner than expected, compare the configured absolute,
+  near-clip, and reference-scale minimums with `GetMinimumDistance`.
 
 ## Validation
 
