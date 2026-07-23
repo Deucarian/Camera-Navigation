@@ -10,10 +10,6 @@ namespace Deucarian.CameraNavigation
         private const float MinimumOrthographicSize = 0.01f;
         private const float MaximumOrthographicSize = 100000f;
 
-        private readonly float keyboardPanSpeed = 0.9f;
-        private readonly float mousePanSpeed = 0.0025f;
-        private readonly float orthographicMousePanSpeed = 0.003f;
-        private readonly float rotationSpeed = 0.25f;
         private readonly DeucarianWheelZoomSmoother perspectiveZoom =
             new DeucarianWheelZoomSmoother();
         private readonly DeucarianWheelZoomSmoother orthographicZoom =
@@ -141,8 +137,11 @@ namespace Deucarian.CameraNavigation
             {
                 float panScale = camera.orthographic
                     ? Mathf.Max(MinimumOrthographicSize, camera.orthographicSize) *
-                      orthographicMousePanSpeed
-                    : distance * mousePanSpeed;
+                      DeucarianCameraNavigationSpeedResolver
+                          .GetOrbitOrthographicMousePanSpeed(controls)
+                    : distance *
+                      DeucarianCameraNavigationSpeedResolver
+                          .GetOrbitMousePanSpeed(controls);
                 Vector3 pointerOffset =
                     (-camera.transform.right * input.Pan.x -
                      camera.transform.up * input.Pan.y) *
@@ -159,7 +158,8 @@ namespace Deucarian.CameraNavigation
 
             float keyboardScale =
                 Mathf.Max(1f, camera.orthographic ? camera.orthographicSize : distance) *
-                keyboardPanSpeed *
+                DeucarianCameraNavigationSpeedResolver
+                    .GetOrbitKeyboardPanSpeed(controls) *
                 speedFactor *
                 panSensitivity *
                 Mathf.Max(0f, deltaTime);
@@ -316,16 +316,24 @@ namespace Deucarian.CameraNavigation
                     offset,
                     distance,
                     rotateDelta,
-                    rotationSensitivity);
+                    rotationSensitivity,
+                    DeucarianCameraNavigationSpeedResolver
+                        .GetOrbitRotationSpeed(controls));
                 return;
             }
 
             float yaw =
                 Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg +
-                rotateDelta.x * rotationSpeed * rotationSensitivity;
+                rotateDelta.x *
+                DeucarianCameraNavigationSpeedResolver
+                    .GetOrbitRotationSpeed(controls) *
+                rotationSensitivity;
             float pitch =
                 Mathf.Asin(Mathf.Clamp(offset.y / distance, -1f, 1f)) * Mathf.Rad2Deg +
-                rotateDelta.y * rotationSpeed * rotationSensitivity;
+                rotateDelta.y *
+                DeucarianCameraNavigationSpeedResolver
+                    .GetOrbitRotationSpeed(controls) *
+                rotationSensitivity;
             pitch = Mathf.Clamp(pitch, -MaxStablePitchDegrees, MaxStablePitchDegrees);
 
             float yawRadians = yaw * Mathf.Deg2Rad;
@@ -345,7 +353,8 @@ namespace Deucarian.CameraNavigation
             Vector3 offset,
             float distance,
             Vector2 rotateDelta,
-            float rotationSensitivity)
+            float rotationSensitivity,
+            float rotationSpeed)
         {
             float yawDelta = rotateDelta.x * rotationSpeed * rotationSensitivity;
             float pitchDelta = rotateDelta.y * rotationSpeed * rotationSensitivity;

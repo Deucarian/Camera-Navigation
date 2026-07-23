@@ -6,8 +6,6 @@ namespace Deucarian.CameraNavigation
     {
         private const float MinimumWheelZoomReferenceDistance = 0.25f;
 
-        private readonly float moveSpeed = 8f;
-        private readonly float rotationSpeed = 0.18f;
         private readonly DeucarianWheelZoomSmoother wheelZoom =
             new DeucarianWheelZoomSmoother();
 
@@ -77,7 +75,7 @@ namespace Deucarian.CameraNavigation
                 controls != null ? controls.FlyMoveSensitivity : 1f;
             camera.transform.position +=
                 movement *
-                (moveSpeed *
+                (DeucarianCameraNavigationSpeedResolver.GetFlyMoveSpeed(controls) *
                  moveSensitivity *
                  GetSpeedFactor(input.Boost, input.Slow, controls) *
                  Mathf.Max(0f, deltaTime));
@@ -100,10 +98,14 @@ namespace Deucarian.CameraNavigation
             Vector3 euler = camera.transform.rotation.eulerAngles;
             float pitch =
                 NormalizeAngle(euler.x) -
-                lookDelta.y * rotationSpeed * lookSensitivity;
+                lookDelta.y *
+                DeucarianCameraNavigationSpeedResolver.GetFlyRotationSpeed(controls) *
+                lookSensitivity;
             float yaw =
                 euler.y +
-                lookDelta.x * rotationSpeed * lookSensitivity;
+                lookDelta.x *
+                DeucarianCameraNavigationSpeedResolver.GetFlyRotationSpeed(controls) *
+                lookSensitivity;
             pitch = Mathf.Clamp(pitch, -89f, 89f);
             camera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }

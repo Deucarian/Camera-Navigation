@@ -3,6 +3,7 @@
   "rootNamespace": "Deucarian.CameraNavigation.Tests",
   "references": [
     "Deucarian.CameraNavigation",
+    "Deucarian.CameraNavigation.Editor",
     "Deucarian.Common"
   ],
   "includePlatforms": [
