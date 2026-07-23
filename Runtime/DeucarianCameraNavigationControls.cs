@@ -13,26 +13,26 @@ namespace Deucarian.CameraNavigation
     {
         public const string CanonicalResourcesPath =
             "Deucarian/CameraNavigationControls";
-        public const float DefaultGlobalSensitivity = 1f;
+        public const float DefaultGlobalSensitivity = 10f;
         public const float DefaultWheelZoomStep = 0.12f;
         public const float DefaultWheelZoomSmoothingTime = 0.08f;
         public const float DefaultWheelZoomStopEpsilon = 0.001f;
         public const float DefaultBoostScale = 4f;
         public const float DefaultOrbitKeyboardPanSpeed = 0.9f;
-        public const float DefaultOrbitMousePanSpeed = 0.0025f;
+        public const float DefaultOrbitMousePanSpeed = 0.002f;
         public const float DefaultOrbitOrthographicMousePanSpeed = 0.003f;
-        public const float DefaultOrbitRotationSpeed = 0.25f;
-        public const float DefaultOrbitRotationSensitivity = 0.45f;
+        public const float DefaultOrbitRotationSpeed = 0.35f;
+        public const float DefaultOrbitRotationSensitivity = 0.9f;
         public const float DefaultOrbitPanSensitivity = 1.4f;
-        public const float DefaultOrbitZoomSensitivity = 1f;
+        public const float DefaultOrbitZoomSensitivity = 10f;
         public const float DefaultOrbitMinimumDistance = 0.0001f;
         public const float DefaultOrbitMinimumDistanceScale = 0.00001f;
         public const float DefaultOrbitNearClipDistanceMultiplier = 1.1f;
-        public const float DefaultFlyMoveSpeed = 8f;
-        public const float DefaultFlyRotationSpeed = 0.18f;
+        public const float DefaultFlyMoveSpeed = 2f;
+        public const float DefaultFlyRotationSpeed = 0.24f;
         public const float DefaultFlyLookSensitivity = 1.35f;
         public const float DefaultFlyMoveSensitivity = 1f;
-        public const float DefaultFlyZoomSensitivity = 1f;
+        public const float DefaultFlyZoomSensitivity = 10f;
 
         [Header("Global")]
         [Tooltip("Multiplies every Orbit and Fly navigation action.")]

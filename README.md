@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.4`.
+Current package version: `0.2.5`.
 
 ## When to use it
 
@@ -135,7 +135,7 @@ Does not own:
 - If Orbit stops sooner than expected, compare the configured absolute,
   near-clip, and reference-scale minimums with `GetMinimumDistance`.
 - If Orbit or Fly feels too fast or slow, open the Camera Navigation window and
-  adjust the complete speed profile or restore the legacy Report Viewer defaults.
+  adjust the complete speed profile or restore the approved Deucarian defaults.
 
 ## Validation
 

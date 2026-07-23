@@ -373,6 +373,7 @@ namespace Deucarian.CameraNavigation.Tests
             GameObject flyCameraObject = new GameObject("Fly Zoom Camera");
             DeucarianCameraNavigationControls controls =
                 DeucarianCameraNavigationControls.CreateRuntimeDefault();
+            controls.GlobalSensitivity = 0.1f;
             try
             {
                 Camera orbitCamera = orbitCameraObject.AddComponent<Camera>();
