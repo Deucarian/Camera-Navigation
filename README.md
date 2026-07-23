@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.0`.
+Current package version: `0.2.1`.
 
 ## When to use it
 
@@ -46,7 +46,9 @@ Requires Unity `2022.3` or newer.
 
 1. Add `DeucarianCameraNavigator` to a GameObject in the scene.
 2. Assign the target `Camera`, or leave it empty to use `Camera.main`.
-3. Capture an origin pose and move to a top-down or framed pose from your own gameplay/viewer code:
+3. Create or edit an Orbit/Fly controls asset through
+   `Tools > Deucarian > Experience and Interaction > World Interaction > Camera Navigation`.
+4. Capture an origin pose and move to a top-down or framed pose from your own gameplay/viewer code:
 
 ```csharp
 using Deucarian.CameraNavigation;
@@ -83,9 +85,13 @@ starting scene with camera navigation and top-down framing.
 - `DeucarianCameraNavigator`: cancellable move-to-pose, move-to-origin, top-down, and waypoint movement host.
 - `DeucarianOrbitCameraController`: pivot-safe Orbit rotation, pan, movement, and smooth perspective/orthographic zoom.
 - `DeucarianFlyCameraController`: Fly look, movement, modifiers, and smooth wheel dolly.
-- `DeucarianCameraNavigationControls`: configurable sensitivities, smoothing, and Orbit minimum-distance policy.
+- `DeucarianCameraNavigationControls`: configurable Orbit/Fly base speeds,
+  sensitivities, smoothing, modifiers, and Orbit minimum-distance policy.
 - `IDeucarianCameraNavigationControls`: settings boundary for application-owned
   navigation control assets.
+- `IDeucarianOrbitNavigationSpeeds` and `IDeucarianFlyNavigationSpeeds`:
+  optional speed-profile boundaries that let application-owned controls override
+  package base speeds without coupling to the concrete package asset.
 - `DeucarianOrbitCameraInput` and `DeucarianFlyCameraInput`: normalized input values for any input backend.
 
 ### Orbit minimum distance
@@ -126,6 +132,8 @@ Does not own:
 - If framing looks too tight, pass a larger padding value to `DeucarianCameraFraming` helpers before moving to the pose.
 - If Orbit stops sooner than expected, compare the configured absolute,
   near-clip, and reference-scale minimums with `GetMinimumDistance`.
+- If Orbit or Fly feels too fast or slow, open the Camera Navigation window and
+  adjust the complete speed profile or restore the legacy Report Viewer defaults.
 
 ## Validation
 

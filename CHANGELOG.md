@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 - 2026-07-23
+
+- Restored the complete legacy Report Viewer Orbit and Fly speed profile as the
+  package defaults.
+- Made Orbit and Fly base speeds configurable through optional abstract speed
+  profiles without breaking existing controls implementations.
+- Added one categorized Camera Navigation editor window for creating, editing,
+  selecting, and restoring project controls assets.
+
 ## 0.2.0 - 2026-07-23
 
 - Made the Orbit minimum distance configurable and scale-aware.

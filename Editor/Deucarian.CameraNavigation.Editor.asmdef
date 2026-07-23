@@ -1,0 +1,18 @@
+{
+  "name": "Deucarian.CameraNavigation.Editor",
+  "rootNamespace": "Deucarian.CameraNavigation.Editor",
+  "references": [
+    "Deucarian.CameraNavigation"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
