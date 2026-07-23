@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.4 - 2026-07-23
+
+- Exposed adjustable global sensitivity through an abstract controls contract.
+- Defined the canonical runtime controls resource path used by project
+  composition roots.
+- Clarified that Global Sensitivity affects every navigation channel while
+  Boost / Slow Scale applies only to modifier-driven translation.
+
 ## 0.2.3 - 2026-07-23
 
 - Restored the Report Viewer's actual pre-extraction Orbit rotation, Orbit pan,

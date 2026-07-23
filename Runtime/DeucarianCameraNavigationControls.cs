@@ -7,10 +7,12 @@ namespace Deucarian.CameraNavigation
         menuName = "Deucarian/Camera Navigation/Navigation Controls")]
     public sealed class DeucarianCameraNavigationControls :
         ScriptableObject,
-        IDeucarianCameraNavigationControls,
+        IDeucarianAdjustableCameraNavigationControls,
         IDeucarianOrbitNavigationSpeeds,
         IDeucarianFlyNavigationSpeeds
     {
+        public const string CanonicalResourcesPath =
+            "Deucarian/CameraNavigationControls";
         public const float DefaultGlobalSensitivity = 1f;
         public const float DefaultWheelZoomStep = 0.12f;
         public const float DefaultWheelZoomSmoothingTime = 0.08f;
@@ -33,6 +35,7 @@ namespace Deucarian.CameraNavigation
         public const float DefaultFlyZoomSensitivity = 1f;
 
         [Header("Global")]
+        [Tooltip("Multiplies every Orbit and Fly navigation action.")]
         [SerializeField, Min(0.01f)] private float globalSensitivity =
             DefaultGlobalSensitivity;
 
@@ -82,6 +85,9 @@ namespace Deucarian.CameraNavigation
             DefaultWheelZoomStopEpsilon;
 
         [Header("Modifiers")]
+        [Tooltip(
+            "Multiplies translational movement while Boost is held; " +
+            "Slow uses its inverse.")]
         [SerializeField, Min(1f)] private float boostScale = DefaultBoostScale;
 
         public float GlobalSensitivity

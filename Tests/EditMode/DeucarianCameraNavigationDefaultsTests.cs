@@ -77,6 +77,60 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
+        public void GlobalSensitivityMultipliesEveryNavigationChannel()
+        {
+            DeucarianCameraNavigationControls controls =
+                DeucarianCameraNavigationControls.CreateRuntimeDefault();
+            try
+            {
+                controls.GlobalSensitivity = 2f;
+
+                Assert.That(
+                    controls.OrbitRotationSensitivity,
+                    Is.EqualTo(0.9f).Within(Tolerance));
+                Assert.That(
+                    controls.OrbitPanSensitivity,
+                    Is.EqualTo(2.8f).Within(Tolerance));
+                Assert.That(
+                    controls.OrbitZoomSensitivity,
+                    Is.EqualTo(2f).Within(Tolerance));
+                Assert.That(
+                    controls.FlyLookSensitivity,
+                    Is.EqualTo(2.7f).Within(Tolerance));
+                Assert.That(
+                    controls.FlyMoveSensitivity,
+                    Is.EqualTo(2f).Within(Tolerance));
+                Assert.That(
+                    controls.FlyZoomSensitivity,
+                    Is.EqualTo(2f).Within(Tolerance));
+            }
+            finally
+            {
+                Object.DestroyImmediate(controls);
+            }
+        }
+
+        [Test]
+        public void RuntimeControlsExposeAdjustableGlobalSensitivity()
+        {
+            DeucarianCameraNavigationControls controls =
+                DeucarianCameraNavigationControls.CreateRuntimeDefault();
+            try
+            {
+                Assert.That(
+                    controls,
+                    Is.AssignableTo<IDeucarianAdjustableCameraNavigationControls>());
+                Assert.That(
+                    DeucarianCameraNavigationControls.CanonicalResourcesPath,
+                    Is.EqualTo("Deucarian/CameraNavigationControls"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(controls);
+            }
+        }
+
+        [Test]
         public void RestoreDefaultsReappliesLegacyNavigationFeel()
         {
             DeucarianCameraNavigationControls controls =
