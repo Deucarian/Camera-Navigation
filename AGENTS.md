@@ -23,10 +23,12 @@ This package must not own:
 Allowed dependency shape:
 
 - May depend on Common for approved Unity object cleanup and low-level runtime primitives.
+- May depend on Editor from editor-only assemblies for the package-owned Camera Navigation workflow.
 
 Required dependencies and why:
 
 - `com.deucarian.common`: approved Unity object lifetime helper and shared runtime primitive owner.
+- `com.deucarian.editor`: shared Deucarian editor shell, chrome, styles, icons, and workflow controls.
 
 Optional/version-defined dependencies:
 
@@ -40,7 +42,7 @@ Architecture exceptions:
 
 - Logging: Do not add diagnostics/logging unless package behavior actually needs it; if needed, use Deucarian Logging and update all metadata together.
 - Common: Use Common-owned helpers instead of local copies when production code needs approved shared cleanup/runtime primitives.
-- Editor UI: No editor shell or shared editor UI ownership.
+- Editor UI: Own the Camera Navigation workflow only; compose every editor surface from `com.deucarian.editor` instead of defining package-local chrome or styles.
 - Diagnostics: Do not become Diagnostics; camera navigation may expose status through its own APIs only when needed.
 - Testing: Test fixture teardown may use `DestroyImmediate` directly.
 

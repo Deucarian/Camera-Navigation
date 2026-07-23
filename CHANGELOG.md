@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 - 2026-07-23
+
+- Rebuilt the Camera Navigation settings window with the shared Deucarian
+  Editor workbench, chrome, status, and workflow-control styling.
+- Declared the exact Editor package dependency used by the editor-only
+  assembly while keeping the runtime assembly editor-independent.
+
 ## 0.2.1 - 2026-07-23
 
 - Restored the complete legacy Report Viewer Orbit and Fly speed profile as the
