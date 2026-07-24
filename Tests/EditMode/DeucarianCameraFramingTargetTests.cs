@@ -275,6 +275,66 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
+        public void PosedBoundsCreateWorldBoundsWithoutRenderedGeometry()
+        {
+            Vector3 position = new Vector3(10f, 2f, -4f);
+            Quaternion rotation = Quaternion.Euler(0f, 90f, 0f);
+            Bounds localBounds = new Bounds(
+                new Vector3(1f, 0f, 0f),
+                new Vector3(2f, 4f, 6f));
+
+            bool created =
+                DeucarianCameraFraming.TryCreateWorldBounds(
+                    new DeucarianPosedBounds(
+                        position,
+                        rotation,
+                        localBounds),
+                    out Bounds worldBounds);
+
+            Assert.That(created, Is.True);
+            Assert.That(
+                Vector3.Distance(
+                    worldBounds.center,
+                    position + rotation * localBounds.center),
+                Is.LessThan(Tolerance));
+            Assert.That(
+                Vector3.Distance(
+                    worldBounds.size,
+                    new Vector3(6f, 4f, 2f)),
+                Is.LessThan(Tolerance));
+        }
+
+        [Test]
+        public void InvalidPosedBoundsFailWithoutProducingBounds()
+        {
+            bool invalidPosition =
+                DeucarianCameraFraming.TryCreateWorldBounds(
+                    new DeucarianPosedBounds(
+                        new Vector3(float.NaN, 0f, 0f),
+                        Quaternion.identity,
+                        new Bounds(Vector3.zero, Vector3.one)),
+                    out _);
+            bool invalidRotation =
+                DeucarianCameraFraming.TryCreateWorldBounds(
+                    new DeucarianPosedBounds(
+                        Vector3.zero,
+                        default,
+                        new Bounds(Vector3.zero, Vector3.one)),
+                    out _);
+            bool emptyBounds =
+                DeucarianCameraFraming.TryCreateWorldBounds(
+                    new DeucarianPosedBounds(
+                        Vector3.zero,
+                        Quaternion.identity,
+                        new Bounds(Vector3.zero, Vector3.zero)),
+                    out _);
+
+            Assert.That(invalidPosition, Is.False);
+            Assert.That(invalidRotation, Is.False);
+            Assert.That(emptyBounds, Is.False);
+        }
+
+        [Test]
         public void InvalidTargetFailsWithoutProducingAPose()
         {
             GameObject cameraObject =

@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.8`.
+Current package version: `0.2.9`.
 
 ## When to use it
 
@@ -82,6 +82,8 @@ starting scene with camera navigation and top-down framing.
 - `DeucarianCameraPose`: capture/apply camera transform and projection state.
 - `DeucarianCameraMotionSettings`: transition speed, duration, projection-match field of view, and movement/rotation easing curves.
 - `DeucarianCameraFraming`: bounds framing, top-down pose, projection matching, and clip-plane helpers.
+- `DeucarianPosedBounds`: renderer-independent position, rotation, and local
+  bounds input for deterministic world-space framing geometry.
 - `DeucarianCameraFramingSettings`: project-level policy for using a target's
   preferred rotation or preserving the current camera rotation, plus global
   padding, relaxed-distance, and near-clip clearance multipliers.

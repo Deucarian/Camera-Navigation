@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.9 - 2026-07-24
+
+- Added generic posed-bounds geometry that converts position, rotation, and
+  local bounds into deterministic world-space framing bounds.
+- Enabled applications to frame data-backed spatial targets before their
+  renderers or other asynchronous presentation resources exist.
+
 ## 0.2.8 - 2026-07-24
 
 - Added a generic relaxed-distance framing profile with an editor-configurable

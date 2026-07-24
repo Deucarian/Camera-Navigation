@@ -68,7 +68,7 @@ namespace Deucarian.CameraNavigation.Editor
 
                 DeucarianEditorChrome.DrawFooterVersion(
                     "com.deucarian.camera-navigation",
-                    "0.2.8");
+                    "0.2.9");
                 EditorGUILayout.EndScrollView();
             }
         }
