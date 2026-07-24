@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.5`.
+Current package version: `0.2.6`.
 
 ## When to use it
 
