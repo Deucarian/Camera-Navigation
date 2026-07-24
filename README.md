@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.6`.
+Current package version: `0.2.7`.
 
 ## When to use it
 
@@ -46,7 +46,7 @@ Requires Unity `2022.3` or newer.
 
 1. Add `DeucarianCameraNavigator` to a GameObject in the scene.
 2. Assign the target `Camera`, or leave it empty to use `Camera.main`.
-3. Create or edit an Orbit/Fly controls asset through
+3. Create or edit the project Orbit/Fly and automatic-framing assets through
    `Tools > Deucarian > Experience and Interaction > World Interaction > Camera Navigation`.
 4. Capture an origin pose and move to a top-down or framed pose from your own gameplay/viewer code:
 
@@ -82,6 +82,9 @@ starting scene with camera navigation and top-down framing.
 - `DeucarianCameraPose`: capture/apply camera transform and projection state.
 - `DeucarianCameraMotionSettings`: transition speed, duration, projection-match field of view, and movement/rotation easing curves.
 - `DeucarianCameraFraming`: bounds framing, top-down pose, projection matching, and clip-plane helpers.
+- `DeucarianCameraFramingSettings`: project-level policy for using a target's
+  preferred rotation or preserving the current camera rotation, plus global
+  padding and near-clip clearance multipliers.
 - `DeucarianCameraNavigator`: cancellable move-to-pose, move-to-origin, top-down, and waypoint movement host.
 - `DeucarianOrbitCameraController`: pivot-safe Orbit rotation, pan, movement, and smooth perspective/orthographic zoom.
 - `DeucarianFlyCameraController`: Fly look, movement, modifiers, and smooth wheel dolly.
@@ -132,6 +135,8 @@ Does not own:
 - If `MoveToTopDown` does nothing, confirm the navigator has a target camera or the scene has a tagged `MainCamera`.
 - If movement snaps, check whether the scene is in Edit Mode or the motion settings calculate a zero-duration transition.
 - If framing looks too tight, pass a larger padding value to `DeucarianCameraFraming` helpers before moving to the pose.
+- If automatic framing should pan and zoom without rotating, set the canonical
+  framing asset's rotation policy to `Preserve Current Camera Rotation`.
 - If Orbit stops sooner than expected, compare the configured absolute,
   near-clip, and reference-scale minimums with `GetMinimumDistance`.
 - If Orbit or Fly feels too fast or slow, open the Camera Navigation window and

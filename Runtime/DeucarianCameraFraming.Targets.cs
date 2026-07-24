@@ -11,26 +11,48 @@ namespace Deucarian.CameraNavigation
             Camera camera,
             out DeucarianCameraPose pose)
         {
+            return TryCreateCurrentProjectionFramePose(
+                target,
+                camera,
+                null,
+                out pose);
+        }
+
+        public static bool TryCreateCurrentProjectionFramePose(
+            DeucarianCameraFramingTarget target,
+            Camera camera,
+            IDeucarianCameraFramingSettings settings,
+            out DeucarianCameraPose pose)
+        {
             pose = default;
             if (camera == null ||
                 !IsUsableFrameBounds(target.Bounds) ||
                 !IsFiniteFrameValue(target.FocusPoint) ||
                 !IsFiniteFrameValue(target.Padding) ||
+                !TryResolveSettings(
+                    settings,
+                    out DeucarianCameraFramingRotationPolicy
+                        rotationPolicy,
+                    out float paddingMultiplier,
+                    out float nearClipClearanceMultiplier) ||
                 !TryResolveFrameRotation(
                     target,
                     camera.transform.rotation,
+                    rotationPolicy,
                     out Quaternion rotation))
             {
                 return false;
             }
 
-            float padding = Mathf.Max(1f, target.Padding);
+            float padding = Mathf.Max(
+                1f,
+                target.Padding * paddingMultiplier);
             float aspect = ResolveAspect(camera);
             float nearClearance =
-                Mathf.Max(MinimumFrameExtent, camera.nearClipPlane) +
                 Mathf.Max(
                     MinimumFrameExtent,
-                    camera.nearClipPlane * 0.05f);
+                    camera.nearClipPlane) *
+                nearClipClearanceMultiplier;
             Vector3 right = rotation * Vector3.right;
             Vector3 up = rotation * Vector3.up;
             Vector3 forward = rotation * Vector3.forward;
@@ -192,11 +214,26 @@ namespace Deucarian.CameraNavigation
         private static bool TryResolveFrameRotation(
             DeucarianCameraFramingTarget target,
             Quaternion currentRotation,
+            DeucarianCameraFramingRotationPolicy rotationPolicy,
             out Quaternion rotation)
         {
-            rotation = target.HasPreferredCameraRotation
-                ? target.PreferredCameraRotation
-                : currentRotation;
+            switch (rotationPolicy)
+            {
+                case DeucarianCameraFramingRotationPolicy
+                    .UsePreferredTargetRotation:
+                    rotation = target.HasPreferredCameraRotation
+                        ? target.PreferredCameraRotation
+                        : currentRotation;
+                    break;
+                case DeucarianCameraFramingRotationPolicy
+                    .PreserveCurrentCameraRotation:
+                    rotation = currentRotation;
+                    break;
+                default:
+                    rotation = Quaternion.identity;
+                    return false;
+            }
+
             float magnitude = Mathf.Sqrt(
                 rotation.x * rotation.x +
                 rotation.y * rotation.y +
@@ -216,6 +253,31 @@ namespace Deucarian.CameraNavigation
                 rotation.z * inverseMagnitude,
                 rotation.w * inverseMagnitude);
             return true;
+        }
+
+        private static bool TryResolveSettings(
+            IDeucarianCameraFramingSettings settings,
+            out DeucarianCameraFramingRotationPolicy rotationPolicy,
+            out float paddingMultiplier,
+            out float nearClipClearanceMultiplier)
+        {
+            rotationPolicy = settings != null
+                ? settings.RotationPolicy
+                : DeucarianCameraFramingRotationPolicy
+                    .UsePreferredTargetRotation;
+            paddingMultiplier = settings != null
+                ? settings.PaddingMultiplier
+                : DeucarianCameraFramingSettings
+                    .DefaultPaddingMultiplier;
+            nearClipClearanceMultiplier = settings != null
+                ? settings.NearClipClearanceMultiplier
+                : DeucarianCameraFramingSettings
+                    .DefaultNearClipClearanceMultiplier;
+            return IsFiniteFrameValue(paddingMultiplier) &&
+                   paddingMultiplier >= 1f &&
+                   IsFiniteFrameValue(
+                       nearClipClearanceMultiplier) &&
+                   nearClipClearanceMultiplier >= 1f;
         }
 
         private static bool IsUsableFrameBounds(Bounds bounds)
