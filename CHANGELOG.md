@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.6 - 2026-07-24
+
+- Added immutable, orientation-aware framing targets that fit world bounds in
+  the camera's current projection while preserving FoV and near-clip safety.
+- Added focused coverage for perspective, orthographic, current-view fallback,
+  preferred rotations, and invalid framing data.
+
 ## 0.2.5 - 2026-07-23
 
 - Promoted the user-tuned Report Viewer Orbit and Fly profile to the package

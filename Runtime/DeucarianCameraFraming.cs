@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Deucarian.CameraNavigation
 {
-    public static class DeucarianCameraFraming
+    public static partial class DeucarianCameraFraming
     {
         private const float DefaultPadding = 1.25f;
         private const float MinimumBoundsRadius = 1f;
