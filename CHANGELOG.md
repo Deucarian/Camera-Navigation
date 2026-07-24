@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.10 - 2026-07-24
+
+- Added a generic framing-bounds strategy contract so applications can select
+  their bounds source through composition instead of conditional policy.
+- Added reusable posed-data and rendered-geometry strategies backed by the
+  existing pure bounds calculations.
+
 ## 0.2.9 - 2026-07-24
 
 - Added generic posed-bounds geometry that converts position, rotation, and

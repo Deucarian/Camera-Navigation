@@ -305,6 +305,63 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
+        public void PosedBoundsStrategyResolvesDataBackedGeometry()
+        {
+            IDeucarianFramingBoundsStrategy<DeucarianPosedBounds>
+                strategy = DeucarianPosedBoundsStrategy.Instance;
+            var source = new DeucarianPosedBounds(
+                new Vector3(2f, 3f, 4f),
+                Quaternion.Euler(0f, 90f, 0f),
+                new Bounds(Vector3.zero, new Vector3(2f, 4f, 6f)));
+
+            bool found =
+                strategy.TryGetBounds(source, out Bounds bounds);
+
+            Assert.That(found, Is.True);
+            Assert.That(
+                Vector3.Distance(
+                    bounds.size,
+                    new Vector3(6f, 4f, 2f)),
+                Is.LessThan(Tolerance));
+        }
+
+        [Test]
+        public void RendererBoundsStrategyResolvesRenderedGeometry()
+        {
+            GameObject source =
+                GameObject.CreatePrimitive(PrimitiveType.Cube);
+            try
+            {
+                source.transform.SetPositionAndRotation(
+                    new Vector3(3f, 4f, 5f),
+                    Quaternion.Euler(0f, 45f, 0f));
+                source.transform.localScale =
+                    new Vector3(2f, 3f, 4f);
+                IDeucarianFramingBoundsStrategy<GameObject> strategy =
+                    DeucarianRendererBoundsStrategy.Instance;
+
+                bool found =
+                    strategy.TryGetBounds(
+                        source,
+                        out Bounds bounds);
+
+                Assert.That(found, Is.True);
+                Assert.That(
+                    Vector3.Distance(
+                        bounds.center,
+                        source.transform.position),
+                    Is.LessThan(Tolerance));
+                Assert.That(
+                    bounds.size.sqrMagnitude,
+                    Is.GreaterThan(0f));
+            }
+            finally
+            {
+                Object.DestroyImmediate(source);
+            }
+        }
+
+        [Test]
         public void InvalidPosedBoundsFailWithoutProducingBounds()
         {
             bool invalidPosition =
