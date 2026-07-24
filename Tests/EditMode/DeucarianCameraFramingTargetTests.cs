@@ -205,10 +205,72 @@ namespace Deucarian.CameraNavigation.Tests
                     Is.EqualTo(
                         DeucarianCameraFramingSettings
                             .DefaultNearClipClearanceMultiplier));
+                Assert.That(
+                    settings.RelaxedDistanceMultiplier,
+                    Is.EqualTo(
+                        DeucarianCameraFramingSettings
+                            .DefaultRelaxedDistanceMultiplier));
             }
             finally
             {
                 Object.DestroyImmediate(settings);
+            }
+        }
+
+        [Test]
+        public void RelaxedDistanceProfileFramesFartherFromTarget()
+        {
+            GameObject cameraObject =
+                new GameObject("Relaxed Distance Framing Camera");
+            DeucarianCameraFramingSettings settings =
+                DeucarianCameraFramingSettings.CreateRuntimeDefault();
+            try
+            {
+                Camera camera = cameraObject.AddComponent<Camera>();
+                camera.transform.rotation = Quaternion.identity;
+                settings.RelaxedDistanceMultiplier = 1.5f;
+                Bounds bounds =
+                    new Bounds(Vector3.zero, Vector3.one * 2f);
+                DeucarianCameraFramingTarget standard =
+                    new DeucarianCameraFramingTarget(
+                        bounds,
+                        bounds.center);
+                DeucarianCameraFramingTarget relaxed =
+                    new DeucarianCameraFramingTarget(
+                        bounds,
+                        bounds.center,
+                        1.25f,
+                        DeucarianCameraFramingDistanceProfile
+                            .Relaxed);
+
+                Assert.IsTrue(
+                    DeucarianCameraFraming
+                        .TryCreateCurrentProjectionFramePose(
+                            standard,
+                            camera,
+                            settings,
+                            out DeucarianCameraPose standardPose));
+                Assert.IsTrue(
+                    DeucarianCameraFraming
+                        .TryCreateCurrentProjectionFramePose(
+                            relaxed,
+                            camera,
+                            settings,
+                            out DeucarianCameraPose relaxedPose));
+
+                Assert.That(
+                    Vector3.Distance(
+                        relaxedPose.Position,
+                        bounds.center),
+                    Is.GreaterThan(
+                        Vector3.Distance(
+                            standardPose.Position,
+                            bounds.center)));
+            }
+            finally
+            {
+                Object.DestroyImmediate(settings);
+                Object.DestroyImmediate(cameraObject);
             }
         }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.8 - 2026-07-24
+
+- Added a generic relaxed-distance framing profile with an editor-configurable
+  relative distance multiplier for smaller or isolated targets.
+- Kept standard composite framing unchanged while allowing applications to
+  opt individual framing targets into the more distant profile.
+
 ## 0.2.7 - 2026-07-24
 
 - Added a reusable automatic-framing profile with configurable target-rotation,
