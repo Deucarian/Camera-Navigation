@@ -1,6 +1,6 @@
 {
   "name": "com.deucarian.camera-navigation",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "displayName": "Deucarian Camera Navigation",
   "description": "Reusable camera pose, framing, transition, orbit, fly, top-down, and waypoint navigation primitives.",
   "unity": "2022.3",
