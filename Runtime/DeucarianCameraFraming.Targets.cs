@@ -34,7 +34,12 @@ namespace Deucarian.CameraNavigation
                     out DeucarianCameraFramingRotationPolicy
                         rotationPolicy,
                     out float paddingMultiplier,
+                    out float relaxedDistanceMultiplier,
                     out float nearClipClearanceMultiplier) ||
+                !TryResolveDistanceMultiplier(
+                    target.DistanceProfile,
+                    relaxedDistanceMultiplier,
+                    out float distanceMultiplier) ||
                 !TryResolveFrameRotation(
                     target,
                     camera.transform.rotation,
@@ -46,7 +51,9 @@ namespace Deucarian.CameraNavigation
 
             float padding = Mathf.Max(
                 1f,
-                target.Padding * paddingMultiplier);
+                target.Padding *
+                paddingMultiplier *
+                distanceMultiplier);
             float aspect = ResolveAspect(camera);
             float nearClearance =
                 Mathf.Max(
@@ -259,6 +266,7 @@ namespace Deucarian.CameraNavigation
             IDeucarianCameraFramingSettings settings,
             out DeucarianCameraFramingRotationPolicy rotationPolicy,
             out float paddingMultiplier,
+            out float relaxedDistanceMultiplier,
             out float nearClipClearanceMultiplier)
         {
             rotationPolicy = settings != null
@@ -269,6 +277,10 @@ namespace Deucarian.CameraNavigation
                 ? settings.PaddingMultiplier
                 : DeucarianCameraFramingSettings
                     .DefaultPaddingMultiplier;
+            relaxedDistanceMultiplier = settings != null
+                ? settings.RelaxedDistanceMultiplier
+                : DeucarianCameraFramingSettings
+                    .DefaultRelaxedDistanceMultiplier;
             nearClipClearanceMultiplier = settings != null
                 ? settings.NearClipClearanceMultiplier
                 : DeucarianCameraFramingSettings
@@ -276,8 +288,30 @@ namespace Deucarian.CameraNavigation
             return IsFiniteFrameValue(paddingMultiplier) &&
                    paddingMultiplier >= 1f &&
                    IsFiniteFrameValue(
+                       relaxedDistanceMultiplier) &&
+                   relaxedDistanceMultiplier >= 1f &&
+                   IsFiniteFrameValue(
                        nearClipClearanceMultiplier) &&
                    nearClipClearanceMultiplier >= 1f;
+        }
+
+        private static bool TryResolveDistanceMultiplier(
+            DeucarianCameraFramingDistanceProfile profile,
+            float relaxedDistanceMultiplier,
+            out float multiplier)
+        {
+            switch (profile)
+            {
+                case DeucarianCameraFramingDistanceProfile.Standard:
+                    multiplier = 1f;
+                    return true;
+                case DeucarianCameraFramingDistanceProfile.Relaxed:
+                    multiplier = relaxedDistanceMultiplier;
+                    return true;
+                default:
+                    multiplier = 1f;
+                    return false;
+            }
         }
 
         private static bool IsUsableFrameBounds(Bounds bounds)

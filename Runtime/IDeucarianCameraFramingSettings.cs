@@ -4,6 +4,7 @@ namespace Deucarian.CameraNavigation
     {
         DeucarianCameraFramingRotationPolicy RotationPolicy { get; }
         float PaddingMultiplier { get; }
+        float RelaxedDistanceMultiplier { get; }
         float NearClipClearanceMultiplier { get; }
     }
 }

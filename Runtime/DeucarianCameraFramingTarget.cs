@@ -4,16 +4,21 @@ namespace Deucarian.CameraNavigation
 {
     public readonly struct DeucarianCameraFramingTarget
     {
+        public const float DefaultPadding = 1.25f;
+
         public DeucarianCameraFramingTarget(
             Bounds bounds,
             Vector3 focusPoint,
-            float padding = 1.25f)
+            float padding = DefaultPadding,
+            DeucarianCameraFramingDistanceProfile distanceProfile =
+                DeucarianCameraFramingDistanceProfile.Standard)
             : this(
                 bounds,
                 focusPoint,
                 false,
                 Quaternion.identity,
-                padding)
+                padding,
+                distanceProfile)
         {
         }
 
@@ -21,13 +26,16 @@ namespace Deucarian.CameraNavigation
             Bounds bounds,
             Vector3 focusPoint,
             Quaternion preferredCameraRotation,
-            float padding = 1.25f)
+            float padding = DefaultPadding,
+            DeucarianCameraFramingDistanceProfile distanceProfile =
+                DeucarianCameraFramingDistanceProfile.Standard)
             : this(
                 bounds,
                 focusPoint,
                 true,
                 preferredCameraRotation,
-                padding)
+                padding,
+                distanceProfile)
         {
         }
 
@@ -36,13 +44,15 @@ namespace Deucarian.CameraNavigation
             Vector3 focusPoint,
             bool hasPreferredCameraRotation,
             Quaternion preferredCameraRotation,
-            float padding)
+            float padding,
+            DeucarianCameraFramingDistanceProfile distanceProfile)
         {
             Bounds = bounds;
             FocusPoint = focusPoint;
             HasPreferredCameraRotation = hasPreferredCameraRotation;
             PreferredCameraRotation = preferredCameraRotation;
             Padding = padding;
+            DistanceProfile = distanceProfile;
         }
 
         public Bounds Bounds { get; }
@@ -50,5 +60,9 @@ namespace Deucarian.CameraNavigation
         public bool HasPreferredCameraRotation { get; }
         public Quaternion PreferredCameraRotation { get; }
         public float Padding { get; }
+        public DeucarianCameraFramingDistanceProfile DistanceProfile
+        {
+            get;
+        }
     }
 }

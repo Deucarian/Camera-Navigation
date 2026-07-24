@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.7`.
+Current package version: `0.2.8`.
 
 ## When to use it
 
@@ -84,7 +84,7 @@ starting scene with camera navigation and top-down framing.
 - `DeucarianCameraFraming`: bounds framing, top-down pose, projection matching, and clip-plane helpers.
 - `DeucarianCameraFramingSettings`: project-level policy for using a target's
   preferred rotation or preserving the current camera rotation, plus global
-  padding and near-clip clearance multipliers.
+  padding, relaxed-distance, and near-clip clearance multipliers.
 - `DeucarianCameraNavigator`: cancellable move-to-pose, move-to-origin, top-down, and waypoint movement host.
 - `DeucarianOrbitCameraController`: pivot-safe Orbit rotation, pan, movement, and smooth perspective/orthographic zoom.
 - `DeucarianFlyCameraController`: Fly look, movement, modifiers, and smooth wheel dolly.

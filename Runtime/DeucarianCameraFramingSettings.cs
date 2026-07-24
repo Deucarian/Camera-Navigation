@@ -12,6 +12,7 @@ namespace Deucarian.CameraNavigation
         public const string CanonicalResourcesPath =
             "Deucarian/CameraFramingSettings";
         public const float DefaultPaddingMultiplier = 1f;
+        public const float DefaultRelaxedDistanceMultiplier = 1.35f;
         public const float DefaultNearClipClearanceMultiplier = 1.05f;
 
         [Tooltip(
@@ -27,6 +28,12 @@ namespace Deucarian.CameraNavigation
             "are clamped so visible bounds cannot be cropped.")]
         [SerializeField, Min(1f)] private float paddingMultiplier =
             DefaultPaddingMultiplier;
+
+        [Tooltip(
+            "Additional relative distance used when an application selects " +
+            "the Relaxed profile for a smaller or isolated target.")]
+        [SerializeField, Min(1f)] private float relaxedDistanceMultiplier =
+            DefaultRelaxedDistanceMultiplier;
 
         [Tooltip(
             "Keeps the closest framed point beyond the camera's near clip " +
@@ -52,6 +59,12 @@ namespace Deucarian.CameraNavigation
             set => nearClipClearanceMultiplier = Mathf.Max(1f, value);
         }
 
+        public float RelaxedDistanceMultiplier
+        {
+            get => Mathf.Max(1f, relaxedDistanceMultiplier);
+            set => relaxedDistanceMultiplier = Mathf.Max(1f, value);
+        }
+
         public static DeucarianCameraFramingSettings CreateRuntimeDefault()
         {
             DeucarianCameraFramingSettings settings =
@@ -66,6 +79,8 @@ namespace Deucarian.CameraNavigation
                 DeucarianCameraFramingRotationPolicy
                     .UsePreferredTargetRotation;
             paddingMultiplier = DefaultPaddingMultiplier;
+            relaxedDistanceMultiplier =
+                DefaultRelaxedDistanceMultiplier;
             nearClipClearanceMultiplier =
                 DefaultNearClipClearanceMultiplier;
         }
@@ -73,6 +88,8 @@ namespace Deucarian.CameraNavigation
         private void OnValidate()
         {
             paddingMultiplier = Mathf.Max(1f, paddingMultiplier);
+            relaxedDistanceMultiplier =
+                Mathf.Max(1f, relaxedDistanceMultiplier);
             nearClipClearanceMultiplier =
                 Mathf.Max(1f, nearClipClearanceMultiplier);
         }
