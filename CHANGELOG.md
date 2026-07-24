@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.7 - 2026-07-24
+
+- Added a reusable automatic-framing profile with configurable target-rotation,
+  padding, and near-clip clearance policies.
+- Extended the existing categorized Camera Navigation settings window to
+  create and edit canonical controls and framing assets together.
+- Added coverage proving applications can preserve their current camera
+  orientation while still fitting preferred-orientation targets.
+
 ## 0.2.6 - 2026-07-24
 
 - Added immutable, orientation-aware framing targets that fit world bounds in

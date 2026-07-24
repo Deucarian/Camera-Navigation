@@ -140,6 +140,79 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
+        public void PreserveCurrentRotationPolicyIgnoresPreferredTargetRotation()
+        {
+            GameObject cameraObject =
+                new GameObject("Preserved Rotation Framing Camera");
+            DeucarianCameraFramingSettings settings =
+                DeucarianCameraFramingSettings.CreateRuntimeDefault();
+            try
+            {
+                Camera camera = cameraObject.AddComponent<Camera>();
+                camera.transform.rotation =
+                    Quaternion.Euler(-21f, 72f, 3f);
+                settings.RotationPolicy =
+                    DeucarianCameraFramingRotationPolicy
+                        .PreserveCurrentCameraRotation;
+                Bounds bounds =
+                    new Bounds(Vector3.one * 4f, Vector3.one * 3f);
+                var target = new DeucarianCameraFramingTarget(
+                    bounds,
+                    bounds.center,
+                    Quaternion.Euler(10f, -35f, 0f));
+
+                bool found =
+                    DeucarianCameraFraming
+                        .TryCreateCurrentProjectionFramePose(
+                            target,
+                            camera,
+                            settings,
+                            out DeucarianCameraPose pose);
+
+                Assert.IsTrue(found);
+                Assert.That(
+                    Quaternion.Angle(
+                        pose.Rotation,
+                        camera.transform.rotation),
+                    Is.LessThan(Tolerance));
+            }
+            finally
+            {
+                Object.DestroyImmediate(settings);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void RuntimeFramingSettingsUseApprovedDefaults()
+        {
+            DeucarianCameraFramingSettings settings =
+                DeucarianCameraFramingSettings.CreateRuntimeDefault();
+            try
+            {
+                Assert.That(
+                    settings.RotationPolicy,
+                    Is.EqualTo(
+                        DeucarianCameraFramingRotationPolicy
+                            .UsePreferredTargetRotation));
+                Assert.That(
+                    settings.PaddingMultiplier,
+                    Is.EqualTo(
+                        DeucarianCameraFramingSettings
+                            .DefaultPaddingMultiplier));
+                Assert.That(
+                    settings.NearClipClearanceMultiplier,
+                    Is.EqualTo(
+                        DeucarianCameraFramingSettings
+                            .DefaultNearClipClearanceMultiplier));
+            }
+            finally
+            {
+                Object.DestroyImmediate(settings);
+            }
+        }
+
+        [Test]
         public void InvalidTargetFailsWithoutProducingAPose()
         {
             GameObject cameraObject =
