@@ -6,7 +6,7 @@ Deucarian Camera Navigation provides reusable Unity camera pose, framing, transi
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.10`.
+Current package version: `0.2.11`.
 
 ## When to use it
 
@@ -47,7 +47,7 @@ Requires Unity `2022.3` or newer.
 1. Add `DeucarianCameraNavigator` to a GameObject in the scene.
 2. Assign the target `Camera`, or leave it empty to use `Camera.main`.
 3. Create or edit the project Orbit/Fly and automatic-framing assets through
-   `Tools > Deucarian > Experience and Interaction > World Interaction > Camera Navigation`.
+   `Tools > Deucarian > Camera Navigation`.
 4. Capture an origin pose and move to a top-down or framed pose from your own gameplay/viewer code:
 
 ```csharp

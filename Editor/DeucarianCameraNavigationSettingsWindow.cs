@@ -7,7 +7,7 @@ namespace Deucarian.CameraNavigation.Editor
     public sealed class DeucarianCameraNavigationSettingsWindow : EditorWindow
     {
         public const string MenuPath =
-            "Tools/Deucarian/Experience and Interaction/World Interaction/Camera Navigation";
+            "Tools/Deucarian/Camera Navigation";
         public const string CanonicalControlsAssetPath =
             "Assets/Resources/Deucarian/CameraNavigationControls.asset";
         public const string CanonicalFramingAssetPath =
@@ -67,8 +67,7 @@ namespace Deucarian.CameraNavigation.Editor
                 DrawFramingProfile();
 
                 DeucarianEditorChrome.DrawFooterVersion(
-                    "com.deucarian.camera-navigation",
-                    "0.2.10");
+                    "com.deucarian.camera-navigation");
                 EditorGUILayout.EndScrollView();
             }
         }

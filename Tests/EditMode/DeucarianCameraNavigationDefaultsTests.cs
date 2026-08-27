@@ -236,10 +236,10 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
-        public void PackageExposesOneCategorizedNavigationSettingsMenu()
+        public void PackageExposesDirectCapabilitySettingsMenu()
         {
             Assert.AreEqual(
-                "Tools/Deucarian/Experience and Interaction/World Interaction/Camera Navigation",
+                "Tools/Deucarian/Camera Navigation",
                 DeucarianCameraNavigationSettingsWindow.MenuPath);
         }
     }
