@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.11 - 2026-08-26
+
+- Moved the package workflow to the direct capability menu
+  `Tools/Deucarian/Camera Navigation`.
+- Added regression coverage that rejects the former nested viewer-oriented
+  categorization.
+- Updated the exact Editor dependency to 1.1.0 for installed-metadata footer
+  resolution.
+
 ## 0.2.10 - 2026-07-24
 
 - Added a generic framing-bounds strategy contract so applications can select
