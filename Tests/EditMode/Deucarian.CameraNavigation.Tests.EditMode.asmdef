@@ -2,6 +2,7 @@
   "name": "Deucarian.CameraNavigation.Tests.EditMode",
   "rootNamespace": "Deucarian.CameraNavigation.Tests",
   "references": [
+    "Deucarian.Editor",
     "Deucarian.CameraNavigation",
     "Deucarian.CameraNavigation.Editor",
     "Deucarian.Common"
