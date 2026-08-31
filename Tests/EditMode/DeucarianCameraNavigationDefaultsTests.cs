@@ -236,11 +236,15 @@ namespace Deucarian.CameraNavigation.Tests
         }
 
         [Test]
-        public void PackageExposesDirectCapabilitySettingsMenu()
+        public void StandaloneOpenApiHasNoNormalToolsMenuEntry()
         {
-            Assert.AreEqual(
-                "Tools/Deucarian/Camera Navigation",
-                DeucarianCameraNavigationSettingsWindow.MenuPath);
+            var method = typeof(DeucarianCameraNavigationSettingsWindow)
+                .GetMethod(nameof(DeucarianCameraNavigationSettingsWindow.OpenWindow));
+
+            Assert.That(method, Is.Not.Null);
+            Assert.That(
+                method.GetCustomAttributes(typeof(MenuItem), false),
+                Is.Empty);
         }
     }
 }
