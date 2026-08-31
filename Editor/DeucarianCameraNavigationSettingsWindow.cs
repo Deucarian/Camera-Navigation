@@ -6,8 +6,6 @@ namespace Deucarian.CameraNavigation.Editor
 {
     public sealed class DeucarianCameraNavigationSettingsWindow : EditorWindow
     {
-        public const string MenuPath =
-            "Tools/Deucarian/Camera Navigation";
         public const string CanonicalControlsAssetPath =
             "Assets/Resources/Deucarian/CameraNavigationControls.asset";
         public const string CanonicalFramingAssetPath =
@@ -19,7 +17,6 @@ namespace Deucarian.CameraNavigation.Editor
         private SerializedObject serializedFramingSettings;
         private Vector2 scrollPosition;
 
-        [MenuItem(MenuPath, priority = 230)]
         public static void OpenWindow()
         {
             DeucarianCameraNavigationSettingsWindow window =
