@@ -20,7 +20,7 @@ namespace Deucarian.CameraNavigation.Editor
         public static void OpenWindow()
         {
             DeucarianCameraNavigationSettingsWindow window =
-                GetWindow<DeucarianCameraNavigationSettingsWindow>(
+                DeucarianEditorWindowPages.GetStandalone<DeucarianCameraNavigationSettingsWindow>(
                     "Camera Navigation");
             window.minSize = new Vector2(460f, 620f);
             window.Show();
@@ -46,6 +46,9 @@ namespace Deucarian.CameraNavigation.Editor
                 Repaint();
             }
         }
+
+        public static IDeucarianEditorPage CreatePage() =>
+            DeucarianEditorImGuiPage.Create<DeucarianCameraNavigationSettingsWindow>(DeucarianToolIds.CameraNavigation, window => window.OnGUI());
 
         private void OnGUI()
         {
