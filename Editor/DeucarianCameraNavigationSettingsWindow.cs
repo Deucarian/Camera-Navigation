@@ -20,7 +20,7 @@ namespace Deucarian.CameraNavigation.Editor
         public static void OpenWindow()
         {
             DeucarianCameraNavigationSettingsWindow window =
-                GetWindow<DeucarianCameraNavigationSettingsWindow>(
+                DeucarianEditorWindowPages.GetStandalone<DeucarianCameraNavigationSettingsWindow>(
                     "Camera Navigation");
             window.minSize = new Vector2(460f, 620f);
             window.Show();
@@ -47,14 +47,17 @@ namespace Deucarian.CameraNavigation.Editor
             }
         }
 
+        public static IDeucarianEditorPage CreatePage() =>
+            DeucarianEditorImGuiPage.Create<DeucarianCameraNavigationSettingsWindow>(DeucarianToolIds.CameraNavigation, window => window.OnGUI());
+
         private void OnGUI()
         {
             using (DeucarianEditorWorkbenchPanelScope page =
-                   DeucarianEditorWorkbenchGUI.BeginSettingsPage(
+                   DeucarianEditorWorkbenchGUI.BeginSettingsPage(this,
                        GUILayout.ExpandHeight(true)))
             {
                 scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-                DeucarianEditorChrome.DrawPackageHeader(
+                DeucarianEditorChrome.DrawPackageHeader(this,
                     "camera",
                     "Camera Navigation",
                     "Configure the complete Orbit and Fly profile with the approved Deucarian feel.");
@@ -63,7 +66,7 @@ namespace Deucarian.CameraNavigation.Editor
                 DrawNavigationProfile();
                 DrawFramingProfile();
 
-                DeucarianEditorChrome.DrawFooterVersion(
+                DeucarianEditorChrome.DrawFooterVersion(this,
                     "com.deucarian.camera-navigation");
                 EditorGUILayout.EndScrollView();
             }
@@ -75,7 +78,7 @@ namespace Deucarian.CameraNavigation.Editor
             DeucarianEditorChrome.BeginSection();
 
             DeucarianCameraNavigationControls selectedControls =
-                (DeucarianCameraNavigationControls)EditorGUILayout.ObjectField(
+                (DeucarianCameraNavigationControls)DeucarianEditorInputGUI.ObjectField(
                     "Controls Asset",
                     controls,
                     typeof(DeucarianCameraNavigationControls),
@@ -86,7 +89,7 @@ namespace Deucarian.CameraNavigation.Editor
             }
 
             DeucarianCameraFramingSettings selectedFraming =
-                (DeucarianCameraFramingSettings)EditorGUILayout.ObjectField(
+                (DeucarianCameraFramingSettings)DeucarianEditorInputGUI.ObjectField(
                     "Framing Asset",
                     framingSettings,
                     typeof(DeucarianCameraFramingSettings),
@@ -129,7 +132,7 @@ namespace Deucarian.CameraNavigation.Editor
 
             if (controls == null || serializedControls == null)
             {
-                EditorGUILayout.HelpBox(
+                DeucarianEditorTextGUI.HelpBox(
                     "Create or select a controls asset to edit navigation values.",
                     MessageType.Info);
                 DeucarianEditorChrome.EndSection();
@@ -159,7 +162,7 @@ namespace Deucarian.CameraNavigation.Editor
             if (framingSettings == null ||
                 serializedFramingSettings == null)
             {
-                EditorGUILayout.HelpBox(
+                DeucarianEditorTextGUI.HelpBox(
                     "Create or select a framing asset to edit automatic framing.",
                     MessageType.Info);
                 DeucarianEditorChrome.EndSection();
@@ -201,7 +204,7 @@ namespace Deucarian.CameraNavigation.Editor
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button(
+                if (DeucarianEditorActionGUI.Button(
                     "Create Project Assets",
                     DeucarianEditorWorkbenchGUI.PrimaryButtonStyle))
                 {
@@ -214,7 +217,7 @@ namespace Deucarian.CameraNavigation.Editor
                            controls == null &&
                            framingSettings == null))
                 {
-                    if (GUILayout.Button(
+                    if (DeucarianEditorActionGUI.Button(
                         "Ping Active Asset",
                         DeucarianEditorWorkbenchGUI.SecondaryButtonStyle))
                     {
