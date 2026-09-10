@@ -23,7 +23,7 @@ namespace Deucarian.CameraNavigation.Editor
                     DeucarianCameraNavigationSettingsWindow.OpenWindow,
                     PackageId,
                     searchTerms: new[] { "camera", "orbit", "fly", "framing" },
-                    order: 100));
+                    order: 100, createPage: DeucarianCameraNavigationSettingsWindow.CreatePage));
 
             CardRegistration = DeucarianControlCenterRegistry.RegisterCardProvider(
                 new CameraNavigationCardProvider());
@@ -74,7 +74,7 @@ namespace Deucarian.CameraNavigation.Editor
                             new DeucarianControlCenterAction(
                                 PackageId + ".open",
                                 "Open Camera Navigation",
-                                DeucarianCameraNavigationSettingsWindow.OpenWindow)
+                                DeucarianCameraNavigationSettingsWindow.OpenWindow, navigationToolId: DeucarianToolIds.CameraNavigation)
                         },
                         searchTerms: new[] { "camera", "orbit", "fly", "framing" })
                 };
