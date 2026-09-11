@@ -29,6 +29,7 @@ Required dependencies and why:
 
 - `com.deucarian.common`: approved Unity object lifetime helper and shared runtime primitive owner.
 - `com.deucarian.editor`: shared Deucarian editor shell, chrome, styles, icons, and workflow controls.
+- `com.deucarian.diagnostics`: sanitized status registration for the typed camera navigation host.
 
 Optional/version-defined dependencies:
 

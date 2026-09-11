@@ -156,6 +156,7 @@ do nothing. Normal runtime consumers keep automatic coroutine updates by default
 Works with:
 
 - `com.deucarian.common` for approved shared runtime primitives.
+- `com.deucarian.diagnostics` for sanitized typed-host status.
 - `com.deucarian.editor` for the shared editor-only Camera Navigation settings
   surface.
 
@@ -202,3 +203,7 @@ See [AGENTS.md](AGENTS.md) for ownership, dependency, and validation guidance.
 ## License
 
 See [LICENSE.md](LICENSE.md).
+
+## Simple typed usage
+
+See [Simple usage](Documentation~/SimpleUsage.md) for the short caller, Inspector selections and one-time scoped setup.

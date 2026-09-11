@@ -9,6 +9,7 @@
 - Match the visible target framing when animated navigation switches perspective/orthographic projection, using the same top-down policy as Viewer Navigation.
 - Fix default wheel zoom collapsing to the pivot: Orbit and Fly now share a bounded, reversible distance scale per detent (about 33% inward at defaults), with fractional/accumulated input and existing smoothing/minimums preserved.
 - Normalize preview pointer/wheel units like the runtime adapter; preserve the current pose when gestures interrupt framing and avoid idle preview geometry rebuilds.
+- Integrate the typed preset/awaitable move APIs with the manual clock, preserving cancellation generations and completion callbacks; remove ignored-root `Samples~` metadata that caused asset-refresh warnings.
 
 ## [0.2.15] - 2026-09-11
 
