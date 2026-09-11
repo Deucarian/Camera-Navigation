@@ -15,21 +15,20 @@ namespace Deucarian.CameraNavigation.Editor
         private DeucarianCameraFramingSettings framing;
         private readonly DeucarianEditorWorkspaceForm scope;
         private int selectedTab;
-        private bool playing;
-        private float angle;
         private double previousTime;
-        private DeucarianEditorSpatialPreview preview;
-        private Button previewButton;
+        private int framingRevision;
+        private readonly DeucarianCameraNavigationPreview preview;
         public IDeucarianEditorPage Page { get; }
 
         internal CameraNavigationPage()
         {
             controls = DeucarianCameraNavigationSettingsWindow.FindPreferredControls();
             framing = DeucarianCameraNavigationSettingsWindow.FindPreferredFramingSettings();
+            preview = new DeucarianCameraNavigationPreview(() => controls);
             var root = new VisualElement();
             workspace = new DeucarianEditorWorkspace(root, Application.productName);
             workspace.Title.text = "Camera navigation";
-            workspace.Subtitle.text = "Tune how moving through your app feels.";
+            workspace.Subtitle.text = "Tune and test camera controls in the preview.";
             DeucarianEditorWorkspaceNavigation.Populate(workspace, DeucarianToolIds.CameraNavigation);
             workspace.SetScopeBeforeTabs();
             scope = new DeucarianEditorWorkspaceForm(workspace.Scope);
@@ -39,7 +38,7 @@ namespace Deucarian.CameraNavigation.Editor
             tabs.AddToClassList("dw-view-choices");
             tabs.Changed += value => { selectedTab = value; Render(); };
             workspace.Tabs.Add(tabs);
-            Page = new DeucarianEditorPage(root, activate: _ => { scope.Refresh(); UpdatePreview(); },
+            Page = new DeucarianEditorPage(root, activate: _ => { scope.Refresh(); previousTime = EditorApplication.timeSinceStartup; },
                 deactivate: StopPreview, update: _ => UpdatePreview(), dispose: Dispose);
             Render();
         }
@@ -58,10 +57,10 @@ namespace Deucarian.CameraNavigation.Editor
                 selectedTab == 2 ? DeucarianEditorIconIds.Focus : DeucarianEditorIconIds.Orbit);
             scroll.Add(card.Root);
             var settings = new VisualElement();
-            preview = new DeucarianEditorSpatialPreview();
+            preview.FlyMode = selectedTab == 1;
             var copy = new VisualElement();
             copy.Add(card.Root.Q(className: "dw-feature-header")); copy.Add(card.Details);
-            var split = Controls.Split(copy, preview);
+            var split = Controls.Split(copy, preview.View);
             split.AddToClassList("dw-feature-side-preview");
             card.Root.Insert(0, split);
             card.Details.Add(settings);
@@ -78,13 +77,18 @@ namespace Deucarian.CameraNavigation.Editor
                 BuildFields(settings, asset);
             if (controls == null || framing == null)
                 card.Actions.Add(Controls.Button("Create project assets", CreateAssets, true));
-            else
-            {
-                card.Actions.Add(Controls.Button("Restore defaults", Reset));
-                previewButton = Controls.IconButton("Preview", DeucarianEditorIconIds.Play,
-                    () => { playing = !playing; previousTime = EditorApplication.timeSinceStartup; RefreshPreviewButton(); }, DeucarianEditorButtonRole.Primary);
-                card.Actions.Add(previewButton);
-            }
+            else card.Actions.Add(Controls.Button("Restore defaults", Reset));
+            card.Actions.Add(Controls.IconButton("Frame target", DeucarianEditorIconIds.Fit,
+                () => preview.Frame(framing), DeucarianEditorButtonRole.Primary));
+            card.Actions.Add(Controls.IconButton("Reset view", DeucarianEditorIconIds.Home, preview.Reset));
+            if (selectedTab == 2)
+                card.Actions.Add(Controls.IconButton("Top view", DeucarianEditorIconIds.Monitor, preview.TopDown));
+            card.Details.Add(Controls.Label(selectedTab == 1
+                ? "Drag to look · Click, then WASD + Q/E to move · Scroll to zoom"
+                : "Drag to orbit · Shift-drag to pan · Scroll to zoom", "dw-muted"));
+            workspace.FooterLeading.text = "Interactive preview · Your scene cameras stay unchanged";
+            previousTime = EditorApplication.timeSinceStartup;
+            framingRevision = framing != null ? EditorUtility.GetDirtyCount(framing) : 0;
         }
 
         private void BuildFields(VisualElement parent, Object asset)
@@ -143,23 +147,19 @@ namespace Deucarian.CameraNavigation.Editor
                 if (framing == null) framing = null;
                 scope.Refresh(); Render(); return;
             }
-            if (!playing || preview == null) return;
             double now = EditorApplication.timeSinceStartup;
-            float speed = controls == null ? 0.35f : selectedTab == 1 ? controls.FlyRotationSpeed : controls.OrbitRotationSpeed;
-            angle += (float)(now - previousTime) * speed * 80;
+            if (selectedTab == 2 && framing != null && framingRevision != EditorUtility.GetDirtyCount(framing))
+            {
+                framingRevision = EditorUtility.GetDirtyCount(framing);
+                preview.Frame(framing);
+            }
+            preview.Update((float)(now - previousTime));
             previousTime = now;
-            preview.SetView(Quaternion.AngleAxis(22, Vector3.right) * Quaternion.AngleAxis(-32 + angle, Vector3.up));
         }
 
-        private void StopPreview() { playing = false; RefreshPreviewButton(); }
-        private void RefreshPreviewButton()
-        {
-            if (previewButton == null) return;
-            previewButton.Q<Label>().text = playing ? "Stop preview" : "Preview";
-            previewButton.tooltip = playing ? "Stop the isolated preview" : "Preview without moving your scene camera";
-        }
+        private void StopPreview() => preview.StopMotion();
 
         private void ClearBindings() { foreach (var binding in bindings) binding.Dispose(); bindings.Clear(); }
-        private void Dispose() { ClearBindings(); workspace.Dispose(); }
+        private void Dispose() { ClearBindings(); preview.Dispose(); workspace.Dispose(); }
     }
 }

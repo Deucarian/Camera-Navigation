@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0] - 2026-09-11
+
+- Replace the illustrative auto-rotation with an interactive isolated camera driven by the runtime Orbit/Fly controllers, wheel damping, framing, and transitions.
+- Apply live controls to the same preview camera, support focused keyboard/pointer input, and release all owned objects and input when closing the page.
+- Add an explicit manual transition clock for isolated Edit Mode previews and deterministic hosts; automatic runtime behavior stays the default.
+- Require Editor 1.11.0 for camera-projected shared preview geometry.
+- Match the visible target framing when animated navigation switches perspective/orthographic projection, using the same top-down policy as Viewer Navigation.
+- Fix default wheel zoom collapsing to the pivot: Orbit and Fly now share a bounded, reversible distance scale per detent (about 33% inward at defaults), with fractional/accumulated input and existing smoothing/minimums preserved.
+- Normalize preview pointer/wheel units like the runtime adapter; preserve the current pose when gestures interrupt framing and avoid idle preview geometry rebuilds.
+
 ## [0.2.15] - 2026-09-11
 
 - Use a native camera navigation form and isolated spatial specimen; retain target selection, existing settings and per-page state.

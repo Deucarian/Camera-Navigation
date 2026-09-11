@@ -28,14 +28,18 @@ namespace Deucarian.CameraNavigation
             float maxValue)
         {
             EnsureInitialized(currentValue);
-            float scale = 1f - zoomDelta * zoomStep * zoomSensitivity;
-            target = Mathf.Clamp(target * scale, minValue, maxValue);
+            target = DeucarianWheelZoomPolicy.ResolveDistance(
+                target, zoomDelta, zoomStep, zoomSensitivity, minValue, maxValue);
         }
 
-        public void AddToTarget(float currentValue, float delta)
+        public void AddDistanceTarget(float referenceDistance, float zoomDelta,
+            float zoomStep, float zoomSensitivity, float minDistance, float maxDistance)
         {
-            EnsureInitialized(currentValue);
-            target += delta;
+            EnsureInitialized(0f);
+            float pendingDistance = Mathf.Clamp(referenceDistance - (target - current), minDistance, maxDistance);
+            float destination = DeucarianWheelZoomPolicy.ResolveDistance(
+                pendingDistance, zoomDelta, zoomStep, zoomSensitivity, minDistance, maxDistance);
+            target += pendingDistance - destination;
         }
 
         public void ClampTarget(float minValue, float maxValue)
