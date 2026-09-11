@@ -1,0 +1,14 @@
+{
+  "name": "Deucarian.CameraNavigation.Tests.PlayMode",
+  "references": [
+    "Deucarian.CameraNavigation",
+    "Deucarian.Diagnostics"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "autoReferenced": false
+}

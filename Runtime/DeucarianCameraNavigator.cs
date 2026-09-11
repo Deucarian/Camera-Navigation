@@ -10,6 +10,8 @@ namespace Deucarian.CameraNavigation
         [SerializeField] private DeucarianCameraMotionSettings motionSettings;
 
         private Coroutine activeMove;
+        private uint moveGeneration;
+        private CameraMoveOperation activeOperation;
         private DeucarianCameraPose originPose;
         private bool hasOriginPose;
 
@@ -37,14 +39,30 @@ namespace Deucarian.CameraNavigation
         }
 
         public bool MoveToPose(DeucarianCameraPose targetPose, Bounds bounds, Vector3 pivot, bool animate = true)
+            => BeginMoveToPose(targetPose, bounds, pivot, animate, null);
+
+        public System.Threading.Tasks.Task<CameraMoveResult> MoveToPoseAsync(DeucarianCameraPose targetPose,
+            Bounds bounds, Vector3 pivot, bool animate = true, System.Threading.CancellationToken cancellationToken = default) =>
+            CameraMoveOperation.Run(operation => BeginMoveToPose(targetPose, bounds, pivot, animate, operation),
+                operation => { if (this != null && ReferenceEquals(activeOperation, operation)) CancelMove(); }, cancellationToken);
+
+        private bool BeginMoveToPose(DeucarianCameraPose targetPose, Bounds bounds, Vector3 pivot,
+            bool animate, CameraMoveOperation operation)
         {
             Camera camera = ResolveCamera();
-            if (camera == null)
+            if (camera == null || !isActiveAndEnabled)
             {
                 return false;
             }
 
-            StopActiveMove(false);
+            uint generation = moveGeneration + 1;
+            StopActiveMove(true);
+            if (generation != moveGeneration)
+            {
+                operation?.Complete(CameraMoveResult.Cancelled);
+                return false;
+            }
+            activeOperation = operation;
             DeucarianCameraMotionSettings settings = ResolveMotionSettings();
             DeucarianCameraPose start = DeucarianCameraPose.Capture(camera);
             float duration = animate
@@ -54,6 +72,7 @@ namespace Deucarian.CameraNavigation
             {
                 targetPose.ApplyTo(camera);
                 DeucarianCameraFraming.ConfigureClipPlanes(camera, bounds);
+                CompleteOperation(CameraMoveResult.Completed);
                 MoveCompleted?.Invoke(targetPose);
                 return true;
             }
@@ -78,15 +97,20 @@ namespace Deucarian.CameraNavigation
             {
                 return false;
             }
+            if (!isActiveAndEnabled) return false;
 
-            StopActiveMove(false);
+            uint generation = moveGeneration + 1;
+            StopActiveMove(true);
+            if (generation != moveGeneration) return false;
             Camera camera = ResolveCamera();
             if (camera == null)
             {
                 return false;
             }
 
-            activeMove = StartCoroutine(AnimateWaypoints(waypoints, bounds, animate));
+            // A non-animated routine can finish synchronously, including its callbacks.
+            Coroutine move = StartCoroutine(AnimateWaypoints(waypoints, bounds, animate, generation));
+            if (generation == moveGeneration) activeMove = move;
             return true;
         }
 
@@ -131,23 +155,28 @@ namespace Deucarian.CameraNavigation
                 DeucarianCameraFraming.ConfigureClipPlanes(camera, bounds);
                 if (completeAtEnd)
                 {
+                    activeMove = null;
+                    CompleteOperation(CameraMoveResult.Completed);
                     MoveCompleted?.Invoke(target);
                 }
             }
 
-            if (completeAtEnd)
+            if (completeAtEnd && camera == null)
             {
                 activeMove = null;
+                CompleteOperation(CameraMoveResult.InvalidTarget);
             }
         }
 
-        private IEnumerator AnimateWaypoints(DeucarianCameraPose[] waypoints, Bounds bounds, bool animate)
+        private IEnumerator AnimateWaypoints(DeucarianCameraPose[] waypoints, Bounds bounds, bool animate, uint generation)
         {
             for (int i = 0; i < waypoints.Length; i++)
             {
                 Camera camera = ResolveCamera();
                 if (camera == null)
                 {
+                    activeMove = null;
+                    moveGeneration++;
                     yield break;
                 }
 
@@ -166,23 +195,27 @@ namespace Deucarian.CameraNavigation
                 yield return AnimatePose(start, target, bounds, duration, false);
             }
 
+            if (generation != moveGeneration) yield break;
+            activeMove = null;
+            moveGeneration++;
             if (waypoints.Length > 0)
             {
                 MoveCompleted?.Invoke(waypoints[waypoints.Length - 1]);
             }
 
-            activeMove = null;
         }
 
         private void StopActiveMove(bool notify)
         {
-            if (activeMove == null)
+            moveGeneration++;
+            if (activeMove == null && activeOperation == null)
             {
                 return;
             }
 
-            StopCoroutine(activeMove);
+            if (activeMove != null) StopCoroutine(activeMove);
             activeMove = null;
+            CompleteOperation(CameraMoveResult.Cancelled);
             if (notify)
             {
                 MoveCanceled?.Invoke();
@@ -194,6 +227,15 @@ namespace Deucarian.CameraNavigation
             targetCamera = targetCamera != null ? targetCamera : Camera.main;
             return targetCamera;
         }
+
+        private void CompleteOperation(CameraMoveResult result)
+        {
+            var operation = activeOperation;
+            activeOperation = null;
+            operation?.Complete(result);
+        }
+
+        private void OnDisable() => StopActiveMove(true);
 
         private DeucarianCameraMotionSettings ResolveMotionSettings()
         {
