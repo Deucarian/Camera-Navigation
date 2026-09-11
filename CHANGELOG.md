@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+- Render an actual Unity Cube in an isolated preview scene, using the active pipeline's default material and the existing smooth navigation controls.
+- Simplify the importable scene to one Cube and declare its URP shader dependency; document pipeline setup separately from package installation.
+- Replace the placeholder sample with an assigned camera, visible reference geometry, editable motion settings and working pose/framing commands.
+- Declare the built-in IMGUI module used only by sample controls; keep input-system ownership outside the navigator.
+
 ## [0.3.0] - 2026-09-11
 
 - Replace the illustrative auto-rotation with an interactive isolated camera driven by the runtime Orbit/Fly controllers, wheel damping, framing, and transitions.
