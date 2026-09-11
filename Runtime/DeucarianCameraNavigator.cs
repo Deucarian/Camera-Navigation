@@ -10,6 +10,8 @@ namespace Deucarian.CameraNavigation
         [SerializeField] private DeucarianCameraMotionSettings motionSettings;
 
         private Coroutine activeMove;
+        private IEnumerator manualMove;
+        private float manualDeltaTime;
         private uint moveGeneration;
         private CameraMoveOperation activeOperation;
         private DeucarianCameraPose originPose;
@@ -30,7 +32,25 @@ namespace Deucarian.CameraNavigation
             set => motionSettings = value;
         }
 
-        public bool IsMoving => activeMove != null;
+        public bool IsMoving => activeMove != null || manualMove != null;
+        public bool UsesManualUpdates { get; private set; }
+
+        /// <summary>Opt in to one explicit clock (for isolated previews or deterministic hosts).</summary>
+        public void SetManualUpdates(bool enabled)
+        {
+            if (UsesManualUpdates == enabled) return;
+            UsesManualUpdates = enabled;
+            StopActiveMove(true);
+        }
+
+        public void Tick(float deltaTime)
+        {
+            if (!UsesManualUpdates || manualMove == null || deltaTime <= 0 ||
+                float.IsNaN(deltaTime) || float.IsInfinity(deltaTime)) return;
+            manualDeltaTime = deltaTime;
+            var move = manualMove;
+            if (!move.MoveNext() && ReferenceEquals(move, manualMove)) manualMove = null;
+        }
 
         public void CaptureOrigin()
         {
@@ -68,7 +88,7 @@ namespace Deucarian.CameraNavigation
             float duration = animate
                 ? settings.CalculateTransitionDuration(Vector3.Distance(start.Position, targetPose.Position))
                 : 0f;
-            if (!Application.isPlaying || duration <= 0f)
+            if ((!Application.isPlaying && !UsesManualUpdates) || duration <= 0f)
             {
                 targetPose.ApplyTo(camera);
                 DeucarianCameraFraming.ConfigureClipPlanes(camera, bounds);
@@ -77,7 +97,7 @@ namespace Deucarian.CameraNavigation
                 return true;
             }
 
-            activeMove = StartCoroutine(AnimatePose(start, targetPose, bounds, duration));
+            StartMove(AnimatePose(start, targetPose, bounds, pivot, duration), generation);
             return true;
         }
 
@@ -108,9 +128,7 @@ namespace Deucarian.CameraNavigation
                 return false;
             }
 
-            // A non-animated routine can finish synchronously, including its callbacks.
-            Coroutine move = StartCoroutine(AnimateWaypoints(waypoints, bounds, animate, generation));
-            if (generation == moveGeneration) activeMove = move;
+            StartMove(AnimateWaypoints(waypoints, bounds, animate, generation), generation);
             return true;
         }
 
@@ -129,23 +147,32 @@ namespace Deucarian.CameraNavigation
             DeucarianCameraPose start,
             DeucarianCameraPose target,
             Bounds bounds,
+            Vector3 pivot,
             float duration,
             bool completeAtEnd = true)
         {
             Camera camera = ResolveCamera();
+            bool enteringOrthographic = !start.Orthographic && target.Orthographic;
+            bool exitingOrthographic = start.Orthographic && !target.Orthographic;
+            var animationStart = exitingOrthographic
+                ? DeucarianCameraFraming.CreateVisibleTopDownTransitionPose(start, pivot, target.FieldOfView) : start;
+            var animationTarget = enteringOrthographic
+                ? DeucarianCameraFraming.CreateVisibleTopDownTransitionPose(target, pivot, start.FieldOfView) : target;
+            if (exitingOrthographic) animationStart.ApplyTo(camera);
             float elapsed = 0f;
             while (camera != null && elapsed < duration)
             {
                 float movement = ResolveMotionSettings().EvaluateMovement(elapsed / duration);
                 float rotation = ResolveMotionSettings().EvaluateRotation(elapsed / duration);
                 DeucarianCameraPose current = new DeucarianCameraPose(
-                    Vector3.LerpUnclamped(start.Position, target.Position, movement),
-                    Quaternion.Slerp(start.Rotation, target.Rotation, rotation),
-                    start.Orthographic,
-                    Mathf.Lerp(start.OrthographicSize, target.OrthographicSize, movement),
-                    Mathf.Lerp(start.FieldOfView, target.FieldOfView, movement));
+                    Vector3.LerpUnclamped(animationStart.Position, animationTarget.Position, movement),
+                    Quaternion.Slerp(animationStart.Rotation, animationTarget.Rotation, rotation),
+                    animationStart.Orthographic,
+                    Mathf.Lerp(animationStart.OrthographicSize, animationTarget.OrthographicSize, movement),
+                    Mathf.Lerp(animationStart.FieldOfView, animationTarget.FieldOfView, movement));
                 current.ApplyTo(camera);
-                elapsed += Time.deltaTime;
+                DeucarianCameraFraming.ConfigureClipPlanes(camera, bounds);
+                elapsed += UsesManualUpdates ? manualDeltaTime : Time.deltaTime;
                 yield return null;
             }
 
@@ -156,6 +183,7 @@ namespace Deucarian.CameraNavigation
                 if (completeAtEnd)
                 {
                     activeMove = null;
+                    manualMove = null;
                     CompleteOperation(CameraMoveResult.Completed);
                     MoveCompleted?.Invoke(target);
                 }
@@ -164,6 +192,7 @@ namespace Deucarian.CameraNavigation
             if (completeAtEnd && camera == null)
             {
                 activeMove = null;
+                manualMove = null;
                 CompleteOperation(CameraMoveResult.InvalidTarget);
             }
         }
@@ -176,6 +205,7 @@ namespace Deucarian.CameraNavigation
                 if (camera == null)
                 {
                     activeMove = null;
+                    manualMove = null;
                     moveGeneration++;
                     yield break;
                 }
@@ -185,18 +215,20 @@ namespace Deucarian.CameraNavigation
                 float duration = animate
                     ? ResolveMotionSettings().CalculateTransitionDuration(Vector3.Distance(start.Position, target.Position))
                     : 0f;
-                if (!Application.isPlaying || duration <= 0f)
+                if ((!Application.isPlaying && !UsesManualUpdates) || duration <= 0f)
                 {
                     target.ApplyTo(camera);
                     DeucarianCameraFraming.ConfigureClipPlanes(camera, bounds);
                     continue;
                 }
 
-                yield return AnimatePose(start, target, bounds, duration, false);
+                var segment = AnimatePose(start, target, bounds, bounds.center, duration, false);
+                while (segment.MoveNext()) yield return segment.Current;
             }
 
             if (generation != moveGeneration) yield break;
             activeMove = null;
+            manualMove = null;
             moveGeneration++;
             if (waypoints.Length > 0)
             {
@@ -208,17 +240,30 @@ namespace Deucarian.CameraNavigation
         private void StopActiveMove(bool notify)
         {
             moveGeneration++;
-            if (activeMove == null && activeOperation == null)
+            if (!IsMoving && activeOperation == null)
             {
                 return;
             }
 
             if (activeMove != null) StopCoroutine(activeMove);
             activeMove = null;
+            (manualMove as IDisposable)?.Dispose();
+            manualMove = null;
             CompleteOperation(CameraMoveResult.Cancelled);
             if (notify)
             {
                 MoveCanceled?.Invoke();
+            }
+        }
+
+        private void StartMove(IEnumerator routine, uint generation)
+        {
+            if (UsesManualUpdates) manualMove = routine;
+            else
+            {
+                // Synchronous completion callbacks may replace this operation before StartCoroutine returns.
+                var move = StartCoroutine(routine);
+                if (generation == moveGeneration) activeMove = move;
             }
         }
 
