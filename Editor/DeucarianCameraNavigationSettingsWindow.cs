@@ -6,277 +6,25 @@ namespace Deucarian.CameraNavigation.Editor
 {
     public sealed class DeucarianCameraNavigationSettingsWindow : EditorWindow
     {
-        public const string CanonicalControlsAssetPath =
-            "Assets/Resources/Deucarian/CameraNavigationControls.asset";
-        public const string CanonicalFramingAssetPath =
-            "Assets/Resources/Deucarian/CameraFramingSettings.asset";
+        public const string CanonicalControlsAssetPath = "Assets/Resources/Deucarian/CameraNavigationControls.asset";
+        public const string CanonicalFramingAssetPath = "Assets/Resources/Deucarian/CameraFramingSettings.asset";
+        private DeucarianEditorPageSession session;
 
-        private DeucarianCameraNavigationControls controls;
-        private SerializedObject serializedControls;
-        private DeucarianCameraFramingSettings framingSettings;
-        private SerializedObject serializedFramingSettings;
-        private Vector2 scrollPosition;
+        public static void OpenWindow() => DeucarianEditorToolWindow.Open(DeucarianToolIds.CameraNavigation);
+        public static IDeucarianEditorPage CreatePage() => new CameraNavigationPage().Page;
 
-        public static void OpenWindow()
+        private void CreateGUI()
         {
-            DeucarianCameraNavigationSettingsWindow window =
-                DeucarianEditorWindowPages.GetStandalone<DeucarianCameraNavigationSettingsWindow>(
-                    "Camera Navigation");
-            window.minSize = new Vector2(460f, 620f);
-            window.Show();
+            session?.Dispose();
+            session = new DeucarianEditorPageSession(this, DeucarianToolIds.CameraNavigation, CreatePage());
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
-            SelectControls(FindPreferredControls());
-            SelectFramingSettings(FindPreferredFramingSettings());
+            session?.Dispose(); session = null;
         }
 
-        private void OnSelectionChange()
-        {
-            if (Selection.activeObject is DeucarianCameraNavigationControls selected)
-            {
-                SelectControls(selected);
-                Repaint();
-            }
-            else if (Selection.activeObject is
-                     DeucarianCameraFramingSettings selectedFraming)
-            {
-                SelectFramingSettings(selectedFraming);
-                Repaint();
-            }
-        }
-
-        public static IDeucarianEditorPage CreatePage() =>
-            DeucarianEditorImGuiPage.Create<DeucarianCameraNavigationSettingsWindow>(DeucarianToolIds.CameraNavigation, window => window.OnGUI());
-
-        private void OnGUI()
-        {
-            using (DeucarianEditorWorkbenchPanelScope page =
-                   DeucarianEditorWorkbenchGUI.BeginSettingsPage(this,
-                       GUILayout.ExpandHeight(true)))
-            {
-                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-                DeucarianEditorChrome.DrawPackageHeader(this,
-                    "camera",
-                    "Camera Navigation",
-                    "Configure the complete Orbit and Fly profile with the approved Deucarian feel.");
-
-                DrawProjectAssets();
-                DrawNavigationProfile();
-                DrawFramingProfile();
-
-                DeucarianEditorChrome.DrawFooterVersion(this,
-                    "com.deucarian.camera-navigation");
-                EditorGUILayout.EndScrollView();
-            }
-        }
-
-        private void DrawProjectAssets()
-        {
-            DeucarianEditorChrome.DrawSectionHeader("Project Assets");
-            DeucarianEditorChrome.BeginSection();
-
-            DeucarianCameraNavigationControls selectedControls =
-                (DeucarianCameraNavigationControls)DeucarianEditorInputGUI.ObjectField(
-                    "Controls Asset",
-                    controls,
-                    typeof(DeucarianCameraNavigationControls),
-                    false);
-            if (selectedControls != controls)
-            {
-                SelectControls(selectedControls);
-            }
-
-            DeucarianCameraFramingSettings selectedFraming =
-                (DeucarianCameraFramingSettings)DeucarianEditorInputGUI.ObjectField(
-                    "Framing Asset",
-                    framingSettings,
-                    typeof(DeucarianCameraFramingSettings),
-                    false);
-            if (selectedFraming != framingSettings)
-            {
-                SelectFramingSettings(selectedFraming);
-            }
-
-            if (controls == null || framingSettings == null)
-            {
-                DeucarianEditorWorkbenchGUI.DrawStatusIconRow(
-                    "circle-alert",
-                    "Create or select both project assets.",
-                    DeucarianEditorStatus.Warning);
-            }
-            else
-            {
-                bool canonical =
-                    AssetDatabase.GetAssetPath(controls) ==
-                    CanonicalControlsAssetPath &&
-                    AssetDatabase.GetAssetPath(framingSettings) ==
-                    CanonicalFramingAssetPath;
-                DeucarianEditorWorkbenchGUI.DrawStatusIconRow(
-                    "circle-check",
-                    canonical
-                        ? "The canonical project camera assets are active."
-                        : "Project camera assets are selected.",
-                    DeucarianEditorStatus.Success);
-            }
-
-            DrawAssetActions();
-            DeucarianEditorChrome.EndSection();
-        }
-
-        private void DrawNavigationProfile()
-        {
-            DeucarianEditorChrome.DrawSectionHeader("Navigation Profile");
-            DeucarianEditorChrome.BeginSection();
-
-            if (controls == null || serializedControls == null)
-            {
-                DeucarianEditorTextGUI.HelpBox(
-                    "Create or select a controls asset to edit navigation values.",
-                    MessageType.Info);
-                DeucarianEditorChrome.EndSection();
-                return;
-            }
-
-            serializedControls.Update();
-            DrawControlProperties(serializedControls);
-            if (serializedControls.ApplyModifiedProperties())
-            {
-                EditorUtility.SetDirty(controls);
-            }
-
-            GUILayout.Space(DeucarianEditorWorkbenchGUI.PanelSpacing);
-            DeucarianEditorSettingsActions.DrawResetToDefaultsButton(
-                RestoreApprovedDefaults,
-                "Restore the approved Deucarian Orbit and Fly defaults.");
-
-            DeucarianEditorChrome.EndSection();
-        }
-
-        private void DrawFramingProfile()
-        {
-            DeucarianEditorChrome.DrawSectionHeader("Automatic Framing");
-            DeucarianEditorChrome.BeginSection();
-
-            if (framingSettings == null ||
-                serializedFramingSettings == null)
-            {
-                DeucarianEditorTextGUI.HelpBox(
-                    "Create or select a framing asset to edit automatic framing.",
-                    MessageType.Info);
-                DeucarianEditorChrome.EndSection();
-                return;
-            }
-
-            serializedFramingSettings.Update();
-            DrawControlProperties(serializedFramingSettings);
-            if (serializedFramingSettings.ApplyModifiedProperties())
-            {
-                EditorUtility.SetDirty(framingSettings);
-            }
-
-            GUILayout.Space(DeucarianEditorWorkbenchGUI.PanelSpacing);
-            DeucarianEditorSettingsActions.DrawResetToDefaultsButton(
-                RestoreApprovedFramingDefaults,
-                "Restore the approved Deucarian automatic framing defaults.");
-
-            DeucarianEditorChrome.EndSection();
-        }
-
-        private static void DrawControlProperties(SerializedObject serializedObject)
-        {
-            SerializedProperty property = serializedObject.GetIterator();
-            bool enterChildren = true;
-            while (property.NextVisible(enterChildren))
-            {
-                enterChildren = false;
-                if (property.name == "m_Script")
-                {
-                    continue;
-                }
-
-                EditorGUILayout.PropertyField(property, true);
-            }
-        }
-
-        private void DrawAssetActions()
-        {
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                if (DeucarianEditorActionGUI.Button(
-                    "Create Project Assets",
-                    DeucarianEditorWorkbenchGUI.PrimaryButtonStyle))
-                {
-                    SelectControls(CreateProjectControls());
-                    SelectFramingSettings(
-                        CreateProjectFramingSettings());
-                }
-
-                using (new EditorGUI.DisabledScope(
-                           controls == null &&
-                           framingSettings == null))
-                {
-                    if (DeucarianEditorActionGUI.Button(
-                        "Ping Active Asset",
-                        DeucarianEditorWorkbenchGUI.SecondaryButtonStyle))
-                    {
-                        Object selected = framingSettings != null
-                            ? (Object)framingSettings
-                            : controls;
-                        Selection.activeObject = selected;
-                        EditorGUIUtility.PingObject(selected);
-                    }
-                }
-            }
-        }
-
-        private void RestoreApprovedDefaults()
-        {
-            if (controls == null)
-            {
-                return;
-            }
-
-            Undo.RecordObject(controls, "Restore Camera Navigation Defaults");
-            controls.ResetToDefaults();
-            EditorUtility.SetDirty(controls);
-            serializedControls.Update();
-        }
-
-        private void RestoreApprovedFramingDefaults()
-        {
-            if (framingSettings == null)
-            {
-                return;
-            }
-
-            Undo.RecordObject(
-                framingSettings,
-                "Restore Camera Framing Defaults");
-            framingSettings.ResetToDefaults();
-            EditorUtility.SetDirty(framingSettings);
-            serializedFramingSettings.Update();
-        }
-
-        private void SelectControls(DeucarianCameraNavigationControls selected)
-        {
-            controls = selected;
-            serializedControls = controls != null
-                ? new SerializedObject(controls)
-                : null;
-        }
-
-        private void SelectFramingSettings(
-            DeucarianCameraFramingSettings selected)
-        {
-            framingSettings = selected;
-            serializedFramingSettings = framingSettings != null
-                ? new SerializedObject(framingSettings)
-                : null;
-        }
-
-        private static DeucarianCameraNavigationControls FindPreferredControls()
+        internal static DeucarianCameraNavigationControls FindPreferredControls()
         {
             DeucarianCameraNavigationControls canonical =
                 AssetDatabase.LoadAssetAtPath<DeucarianCameraNavigationControls>(
@@ -294,7 +42,7 @@ namespace Deucarian.CameraNavigation.Editor
                 : null;
         }
 
-        private static DeucarianCameraFramingSettings
+        internal static DeucarianCameraFramingSettings
             FindPreferredFramingSettings()
         {
             DeucarianCameraFramingSettings canonical =
@@ -316,7 +64,7 @@ namespace Deucarian.CameraNavigation.Editor
                 : null;
         }
 
-        private static DeucarianCameraNavigationControls CreateProjectControls()
+        internal static DeucarianCameraNavigationControls CreateProjectControls()
         {
             EnsureFolder("Assets/Resources/Deucarian");
             DeucarianCameraNavigationControls existing =
@@ -337,7 +85,7 @@ namespace Deucarian.CameraNavigation.Editor
             return created;
         }
 
-        private static DeucarianCameraFramingSettings
+        internal static DeucarianCameraFramingSettings
             CreateProjectFramingSettings()
         {
             EnsureFolder("Assets/Resources/Deucarian");
