@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0] - 2026-09-11
+
+- Add typed reusable definition authoring and/or scoped Inspector components that share the existing C# service behavior.
+- Include a playable Definition Workflow sample with configured hosts, short callers and usage documentation.
+- Align declared package dependencies with the definition-authoring development wave.
+
+
 ## [0.3.0] - 2026-09-11
 
 - Replace the illustrative auto-rotation with an interactive isolated camera driven by the runtime Orbit/Fly controllers, wheel damping, framing, and transitions.

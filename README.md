@@ -1,12 +1,22 @@
 # Deucarian Camera Navigation
 
+## Typed definition workflow
+
+The typed preset holds framing defaults; the scene supplies the camera and target bounds. Both entry points use the same navigator.
+
+Start with the [Definition Workflow walkthrough](Documentation~/DefinitionWorkflow.md).
+Import **Definition Workflow** in Package Manager for a configured sample scene
+and short caller scripts. Definitions can be edited as assets or editable C# declarations; generated keys
+work in code and Inspector dropdowns.
+
+
 ## What this is
 
 Deucarian Camera Navigation provides reusable Unity camera pose, framing, transition, orbit, fly, top-down, and waypoint movement primitives. It is input-agnostic by default: projects feed normalized input structs into the controllers or provide their own input adapters.
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.3.0`.
+Current package version: `0.4.0`.
 
 ## When to use it
 

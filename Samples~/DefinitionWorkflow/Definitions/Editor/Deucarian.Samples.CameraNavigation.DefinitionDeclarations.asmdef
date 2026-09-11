@@ -1,0 +1,5 @@
+{
+  "name": "Deucarian.Samples.CameraNavigation.DefinitionDeclarations",
+  "references": ["Deucarian.CameraNavigation", "Deucarian.CameraNavigation.Editor", "Deucarian.Editor"],
+  "includePlatforms": ["Editor"]
+}
