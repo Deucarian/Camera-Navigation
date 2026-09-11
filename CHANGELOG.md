@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.15] - 2026-09-11
+
+- Use a native camera navigation form and isolated spatial specimen; retain target selection, existing settings and per-page state.
+- Require Editor 1.10.6 for the shared native controls, typography, responsive layouts and accessible interaction states.
+
 ## [0.2.14] - 2026-09-09
 
 ### Changed
