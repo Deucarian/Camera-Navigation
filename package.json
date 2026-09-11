@@ -21,7 +21,9 @@
   "dependencies": {
     "com.deucarian.common": "0.2.1",
     "com.deucarian.editor": "1.11.0",
-    "com.deucarian.diagnostics": "0.2.3"
+    "com.deucarian.diagnostics": "0.2.3",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.render-pipelines.universal": "14.0.12"
   },
   "samples": [
     {

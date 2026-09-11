@@ -207,3 +207,9 @@ See [LICENSE.md](LICENSE.md).
 ## Simple typed usage
 
 See [Simple usage](Documentation~/SimpleUsage.md) for the short caller, Inspector selections and one-time scoped setup.
+
+## Preview and sample rendering
+
+The editor preview renders an isolated Unity Cube with the same navigation controllers; dragging, zooming and profile edits never move a scene camera. It uses the active render pipeline's default material.
+
+The importable `BasicNavigation.unity` example also uses one Cube. Its purple material uses URP, which this package declares as a dependency. Assign a URP pipeline asset in Graphics Settings (and check Quality overrides) before running the sample. Installing URP alone does not change a project's active renderer. Navigation code itself remains pipeline-agnostic.

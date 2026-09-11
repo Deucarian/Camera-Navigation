@@ -28,11 +28,16 @@ namespace Deucarian.CameraNavigation.Tests
             Camera camera;
             var preview = new DeucarianCameraNavigationPreview(() => null);
             camera = preview.Camera;
+            var cube = preview.PreviewCube;
+            Assert.AreEqual("Cube", cube.GetComponent<MeshFilter>().sharedMesh.name);
+            Assert.AreEqual(camera.gameObject.scene, cube.scene);
+            Assert.IsNotNull(cube.GetComponent<MeshRenderer>().sharedMaterial);
             Assert.IsTrue(EditorSceneManager.IsPreviewScene(camera.gameObject.scene));
             Assert.IsFalse(camera.enabled);
             Assert.AreEqual(active, SceneManager.GetActiveScene());
             preview.Dispose(); preview.Dispose();
             Assert.IsTrue(camera == null);
+            Assert.IsTrue(cube == null);
             Assert.AreEqual(dirty, active.isDirty);
         }
 

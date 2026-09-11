@@ -1,16 +1,14 @@
 using System;
 using Deucarian.Common;
 using Deucarian.Editor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Deucarian.CameraNavigation.Editor
 {
     /// <summary>An isolated editor camera using the runtime controllers and transition clock.</summary>
     public sealed class DeucarianCameraNavigationPreview : IDisposable
     {
-        private readonly Scene scene;
+        private readonly CameraNavigationPreviewScene scene;
         private readonly Func<IDeucarianCameraNavigationControls> readControls;
         private readonly DeucarianOrbitCameraController orbit = new DeucarianOrbitCameraController();
         private readonly DeucarianFlyCameraController fly = new DeucarianFlyCameraController();
@@ -24,7 +22,8 @@ namespace Deucarian.CameraNavigation.Editor
 
         public DeucarianEditorSpatialPreview View { get; }
         public Camera Camera { get; }
-        public Bounds Bounds { get; } = new Bounds(Vector3.zero, Vector3.one * 2);
+        public Bounds Bounds => scene.Bounds;
+        public GameObject PreviewCube => scene.Cube;
         public Vector3 Pivot => orbit.Pivot;
         public bool IsMoving => !disposed && navigator.IsMoving;
         public event Action InputStarted;
@@ -39,10 +38,9 @@ namespace Deucarian.CameraNavigation.Editor
             Func<float> pointerDeltaScale = null, Func<float> scrollNormalization = null)
         {
             readControls = controls ?? throw new ArgumentNullException(nameof(controls));
-            scene = EditorSceneManager.NewPreviewScene();
-            var owner = new GameObject("Deucarian isolated navigation preview") { hideFlags = HideFlags.HideAndDontSave };
-            SceneManager.MoveGameObjectToScene(owner, scene);
-            Camera = owner.AddComponent<Camera>();
+            scene = new CameraNavigationPreviewScene();
+            Camera = scene.Camera;
+            var owner = Camera.gameObject;
             Camera.enabled = false;
             Camera.nearClipPlane = 0.01f;
             Camera.farClipPlane = 1000;
@@ -60,9 +58,11 @@ namespace Deucarian.CameraNavigation.Editor
             orbit.SetReferenceBounds(Bounds);
             SyncNavigationState(Bounds.center);
             View = new DeucarianEditorSpatialPreview();
+            View.SetRenderedTexture(null);
             View.SetCamera(Camera);
             View.tooltip = "Drag to look or orbit. Middle-drag or Shift-drag to pan. Scroll to zoom. Click, then use WASD and Q/E to move; Shift boosts, Ctrl slows.";
             input = new CameraNavigationPreviewInput(View, () => FlyMode, pointerDeltaScale, scrollNormalization);
+            View.RegisterCallback<UnityEngine.UIElements.GeometryChangedEvent>(_ => RefreshView(true));
         }
 
         public void Update(float deltaTime, bool suppressIdleMotion = false)
@@ -143,17 +143,18 @@ namespace Deucarian.CameraNavigation.Editor
             fly.SyncZoomState();
         }
 
-        public void RefreshView()
+        public void RefreshView(bool force = false)
         {
             if (disposed) return;
             if (View.contentRect.width > 0 && View.contentRect.height > 0)
                 Camera.aspect = View.contentRect.width / View.contentRect.height;
             var viewMatrix = Camera.worldToCameraMatrix;
             var projectionMatrix = Camera.projectionMatrix;
-            if (lastViewMatrix == viewMatrix && lastProjectionMatrix == projectionMatrix) return;
+            if (!force && lastViewMatrix == viewMatrix && lastProjectionMatrix == projectionMatrix) return;
             lastViewMatrix = viewMatrix;
             lastProjectionMatrix = projectionMatrix;
             View.SetCamera(Camera);
+            if (View.panel != null) View.SetRenderedTexture(scene.Render(View.contentRect));
         }
 
         public void Dispose()
@@ -163,10 +164,10 @@ namespace Deucarian.CameraNavigation.Editor
             disposed = true;
             input.Dispose();
             View.SetCamera(null);
-            UnityObjectUtility.DestroySafely(Camera.gameObject);
+            View.SetRenderedTexture(null);
             UnityObjectUtility.DestroySafely(motion);
             UnityObjectUtility.DestroySafely(fallbackControls);
-            if (scene.IsValid()) EditorSceneManager.ClosePreviewScene(scene);
+            scene.Dispose();
             InputStarted = null;
         }
     }
