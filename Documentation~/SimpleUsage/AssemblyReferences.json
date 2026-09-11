@@ -1,16 +1,15 @@
 {
-  "name": "Deucarian.CameraNavigation",
-  "rootNamespace": "Deucarian.CameraNavigation",
+  "name": "Deucarian.CameraNavigation.Samples.SimpleUsage",
+  "rootNamespace": "Deucarian.CameraNavigation.Samples.SimpleUsage",
   "references": [
-    "Deucarian.Common",
-    "Deucarian.Diagnostics"
+    "Deucarian.CameraNavigation"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
-  "autoReferenced": true,
+  "autoReferenced": false,
   "defineConstraints": [],
   "versionDefines": [],
   "noEngineReferences": false

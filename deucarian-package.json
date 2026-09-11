@@ -15,11 +15,13 @@
     "Deucarian.CameraNavigation.Samples.BasicNavigation"
   ],
   "testAssemblies": [
-    "Deucarian.CameraNavigation.Tests.EditMode"
+    "Deucarian.CameraNavigation.Tests.EditMode",
+    "Deucarian.CameraNavigation.Tests.PlayMode"
   ],
   "requiredDependencies": [
     "com.deucarian.common",
-    "com.deucarian.editor"
+    "com.deucarian.editor",
+    "com.deucarian.diagnostics"
   ],
   "optionalVersionDefinedDependencies": [],
   "allowedDirectDebugCalls": [],

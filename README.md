@@ -165,3 +165,7 @@ See [AGENTS.md](AGENTS.md) for ownership, dependency, and validation guidance.
 ## License
 
 See [LICENSE.md](LICENSE.md).
+
+## Simple typed usage
+
+See [Simple usage](Documentation~/SimpleUsage.md) for the short caller, Inspector selections and one-time scoped setup.
