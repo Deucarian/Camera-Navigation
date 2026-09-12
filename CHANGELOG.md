@@ -2,6 +2,8 @@
 
 ## Asset workflow — Unreleased
 
+- Add an isolated ground grid beneath the real preview cube, using the active render pipeline and shared editor colors. Viewer Navigation inherits the same preview; framing bounds and scene objects remain unchanged.
+
 - Bundle controls and framing defaults matching runtime values, replace arbitrary-first discovery with canonical project/bundled resolution and retain framing selection across redraws.
 
 ## [0.4.0] - Unreleased
