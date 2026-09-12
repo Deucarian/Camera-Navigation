@@ -18,6 +18,7 @@ namespace Deucarian.CameraNavigation.Editor
         private double previousTime;
         private int framingRevision;
         private readonly DeucarianCameraNavigationPreview preview;
+        private readonly DeucarianEditorAssetField framingPicker;
         public IDeucarianEditorPage Page { get; }
 
         internal CameraNavigationPage()
@@ -32,8 +33,14 @@ namespace Deucarian.CameraNavigation.Editor
             DeucarianEditorWorkspaceNavigation.Populate(workspace, DeucarianToolIds.CameraNavigation);
             workspace.SetScopeBeforeTabs();
             scope = new DeucarianEditorWorkspaceForm(workspace.Scope);
-            scope.Asset("navigation-controls", "Controls asset", typeof(DeucarianCameraNavigationControls), () => controls,
-                value => { controls = value as DeucarianCameraNavigationControls; Render(); });
+            scope.AssetWithActions("navigation-controls", "Controls asset", typeof(DeucarianCameraNavigationControls), () => controls,
+                value => { controls = value as DeucarianCameraNavigationControls; Render(); },
+                DeucarianCameraNavigationSettingsWindow.CreateProjectControls, DeucarianEditorAssetCatalog.CopyToProject,
+                DeucarianCameraNavigationSettingsWindow.LoadDefaultControls);
+            framingPicker = new DeucarianEditorAssetField("navigation-framing", typeof(DeucarianCameraFramingSettings), () => framing,
+                value => { framing = value as DeucarianCameraFramingSettings; Render(); },
+                DeucarianCameraNavigationSettingsWindow.CreateProjectFramingSettings, DeucarianEditorAssetCatalog.CopyToProject,
+                DeucarianCameraNavigationSettingsWindow.LoadDefaultFraming);
             var tabs = new DeucarianEditorChoiceBar(new[] { "Orbit", "Fly", "Framing" }, 0);
             tabs.AddToClassList("dw-view-choices");
             tabs.Changed += value => { selectedTab = value; Render(); };
@@ -68,8 +75,7 @@ namespace Deucarian.CameraNavigation.Editor
             if (selectedTab == 2)
             {
                 var form = new DeucarianEditorWorkspaceForm(settings);
-                form.Asset("navigation-framing", "Framing asset", typeof(DeucarianCameraFramingSettings), () => framing,
-                    value => { framing = value as DeucarianCameraFramingSettings; Render(); });
+                settings.Add(Controls.Field("Framing asset", framingPicker.Root)); framingPicker.Refresh();
             }
             if (asset == null)
                 settings.Add(Controls.Label("Select an asset, or create the project defaults to start tuning.", "dw-muted"));
@@ -77,7 +83,11 @@ namespace Deucarian.CameraNavigation.Editor
                 BuildFields(settings, asset);
             if (controls == null || framing == null)
                 card.Actions.Add(Controls.Button("Create project assets", CreateAssets, true));
-            else card.Actions.Add(Controls.Button("Restore defaults", Reset));
+            else
+            {
+                var reset = Controls.Button("Restore defaults", Reset);
+                reset.SetEnabled(!DeucarianEditorAssetCatalog.IsPackageAsset(asset)); card.Actions.Add(reset);
+            }
             card.Actions.Add(Controls.IconButton("Frame target", DeucarianEditorIconIds.Fit,
                 () => preview.Frame(framing), DeucarianEditorButtonRole.Primary));
             card.Actions.Add(Controls.IconButton("Reset view", DeucarianEditorIconIds.Home, preview.Reset));
@@ -133,6 +143,7 @@ namespace Deucarian.CameraNavigation.Editor
         private void Reset()
         {
             Object target = selectedTab == 2 ? framing : controls;
+            if (target == null || DeucarianEditorAssetCatalog.IsPackageAsset(target)) return;
             Undo.RecordObject(target, "Restore camera defaults");
             if (selectedTab == 2) framing.ResetToDefaults(); else controls.ResetToDefaults();
             EditorUtility.SetDirty(target);
