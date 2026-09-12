@@ -1,5 +1,9 @@
 # Deucarian Camera Navigation
 
+## Asset selection and project defaults
+
+The editor preview uses the canonical project controls/framing assets when present, otherwise the bundled runtime-equivalent defaults. Package defaults are read-only: use Create for canonical project defaults or Customize for a named copy. Choose searches Assets and installed Packages. Changing a draft or preview camera does not automatically assign it to scene components.
+
 ## Typed definition workflow
 
 The typed preset holds framing defaults; the scene supplies the camera and target bounds. Both entry points use the same navigator.

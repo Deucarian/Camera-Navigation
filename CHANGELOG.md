@@ -1,5 +1,9 @@
 # Changelog
 
+## Asset workflow — Unreleased
+
+- Bundle controls and framing defaults matching runtime values, replace arbitrary-first discovery with canonical project/bundled resolution and retain framing selection across redraws.
+
 ## [0.4.0] - Unreleased
 
 - Add typed reusable definition authoring and/or scoped Inspector components that share the existing C# service behavior.

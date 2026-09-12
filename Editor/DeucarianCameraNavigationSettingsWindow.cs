@@ -9,6 +9,10 @@ namespace Deucarian.CameraNavigation.Editor
         public const string CanonicalControlsAssetPath = "Assets/Resources/Deucarian/CameraNavigationControls.asset";
         public const string CanonicalFramingAssetPath = "Assets/Resources/Deucarian/CameraFramingSettings.asset";
         private DeucarianEditorPageSession session;
+        internal static DeucarianCameraNavigationControls LoadDefaultControls() =>
+            AssetDatabase.LoadAssetAtPath<DeucarianCameraNavigationControls>("Packages/com.deucarian.camera-navigation/Runtime/Defaults/NavigationControls.asset");
+        internal static DeucarianCameraFramingSettings LoadDefaultFraming() =>
+            AssetDatabase.LoadAssetAtPath<DeucarianCameraFramingSettings>("Packages/com.deucarian.camera-navigation/Runtime/Defaults/FramingSettings.asset");
 
         public static void OpenWindow() => DeucarianEditorToolWindow.Open(DeucarianToolIds.CameraNavigation);
         public static IDeucarianEditorPage CreatePage() => new CameraNavigationPage().Page;
@@ -34,12 +38,7 @@ namespace Deucarian.CameraNavigation.Editor
                 return canonical;
             }
 
-            string[] guids =
-                AssetDatabase.FindAssets("t:DeucarianCameraNavigationControls");
-            return guids.Length > 0
-                ? AssetDatabase.LoadAssetAtPath<DeucarianCameraNavigationControls>(
-                    AssetDatabase.GUIDToAssetPath(guids[0]))
-                : null;
+            return LoadDefaultControls();
         }
 
         internal static DeucarianCameraFramingSettings
@@ -54,14 +53,7 @@ namespace Deucarian.CameraNavigation.Editor
                 return canonical;
             }
 
-            string[] guids =
-                AssetDatabase.FindAssets(
-                    "t:DeucarianCameraFramingSettings");
-            return guids.Length > 0
-                ? AssetDatabase
-                    .LoadAssetAtPath<DeucarianCameraFramingSettings>(
-                        AssetDatabase.GUIDToAssetPath(guids[0]))
-                : null;
+            return LoadDefaultFraming();
         }
 
         internal static DeucarianCameraNavigationControls CreateProjectControls()
