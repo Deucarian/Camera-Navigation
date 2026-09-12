@@ -23,7 +23,9 @@
   "requiredDependencies": [
     "com.deucarian.common",
     "com.deucarian.editor",
-    "com.deucarian.diagnostics"
+    "com.deucarian.diagnostics",
+    "com.unity.modules.imgui",
+    "com.unity.render-pipelines.universal"
   ],
   "optionalVersionDefinedDependencies": [],
   "allowedDirectDebugCalls": [],

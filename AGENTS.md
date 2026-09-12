@@ -30,6 +30,7 @@ Required dependencies and why:
 - `com.deucarian.common`: approved Unity object lifetime helper and shared runtime primitive owner.
 - `com.deucarian.editor`: shared Deucarian editor shell, chrome, styles, icons, and workflow controls.
 - `com.deucarian.diagnostics`: sanitized status registration for the typed camera navigation host.
+- `com.unity.modules.imgui`: the importable sample's minimal command controls; the runtime navigator still does not choose an input system.
 
 Optional/version-defined dependencies:
 
@@ -94,6 +95,8 @@ Also run existing repository tests when changing code or asmdefs. Documentation-
 - Has the audit been updated?
 
 ## Debug And Unity Object Lifetime
+
+- The URP dependency supplies shaders for the packaged navigation sample material. Runtime navigation math must remain render-pipeline agnostic; do not reference URP assemblies there. The editor preview borrows the active pipeline's default material.
 
 - Direct Unity Debug calls are forbidden in production code.
 - Production Unity object cleanup must use Common-owned cleanup APIs when cleanup is needed.

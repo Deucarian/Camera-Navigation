@@ -1,10 +1,15 @@
 # Changelog
 
-## [0.4.0] - 2026-09-11
+## [0.4.0] - Unreleased
 
 - Add typed reusable definition authoring and/or scoped Inspector components that share the existing C# service behavior.
 - Include a playable Definition Workflow sample with configured hosts, short callers and usage documentation.
 - Align declared package dependencies with the definition-authoring development wave.
+
+- Render an actual Unity Cube in an isolated preview scene, using the active pipeline's default material and the existing smooth navigation controls.
+- Simplify the importable scene to one Cube and declare its URP shader dependency; document pipeline setup separately from package installation.
+- Replace the placeholder sample with an assigned camera, visible reference geometry, editable motion settings and working pose/framing commands.
+- Declare the built-in IMGUI module used only by sample controls; keep input-system ownership outside the navigator.
 
 
 ## [0.3.0] - 2026-09-11
