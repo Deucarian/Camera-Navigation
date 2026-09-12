@@ -10,6 +10,32 @@ namespace Deucarian.CameraNavigation.Tests
     public sealed class CameraNavigationPreviewTests
     {
         [Test]
+        public void GroundGridUsesThePreviewSceneWithoutExpandingFramingAndReleasesOwnedResources()
+        {
+            var preview = new DeucarianCameraNavigationPreview(() => null);
+            GameObject grid = null;
+            foreach (var root in preview.Camera.gameObject.scene.GetRootGameObjects())
+                if (root.name == "Preview Grid") grid = root;
+            Assert.NotNull(grid);
+            var mesh = grid.GetComponent<MeshFilter>().sharedMesh;
+            var material = grid.GetComponent<MeshRenderer>().sharedMaterial;
+            var cubeMaterial = preview.PreviewCube.GetComponent<MeshRenderer>().sharedMaterial;
+            try
+            {
+                Assert.AreEqual(preview.Camera.gameObject.scene, grid.scene);
+                Assert.AreEqual(Vector3.one * 2, preview.Bounds.size);
+                Assert.That(mesh.bounds.size.x, Is.GreaterThan(8));
+                Assert.That(mesh.bounds.center.y, Is.EqualTo(-1.02f).Within(.001f));
+                Assert.That(material.shader, Is.EqualTo(cubeMaterial.shader));
+                Assert.AreNotSame(material, cubeMaterial);
+                Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off, grid.GetComponent<MeshRenderer>().shadowCastingMode);
+            }
+            finally { preview.Dispose(); preview.Dispose(); }
+            Assert.IsTrue(grid == null); Assert.IsTrue(mesh == null); Assert.IsTrue(material == null);
+            Assert.IsTrue(cubeMaterial != null, "Borrowed pipeline materials must survive preview disposal.");
+        }
+
+        [Test]
         public void EditorPointerAndWheelUseRuntimeNormalizationUnits()
         {
             Assert.AreEqual(new Vector2(1, -2), CameraNavigationPreviewInput.NormalizePointerDelta(new Vector2(10, -20), .1f));

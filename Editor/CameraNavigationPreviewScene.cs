@@ -1,4 +1,5 @@
 using System;
+using Deucarian.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,6 +12,7 @@ namespace Deucarian.CameraNavigation.Editor
         private readonly PreviewRenderUtility renderer;
         private readonly MeshRenderer cubeRenderer;
         private readonly Material builtInMaterial;
+        private readonly CameraNavigationPreviewGrid grid;
         private bool disposed;
 
         internal Camera Camera => renderer.camera;
@@ -23,7 +25,7 @@ namespace Deucarian.CameraNavigation.Editor
             try
             {
                 Camera.clearFlags = CameraClearFlags.SolidColor;
-                Camera.backgroundColor = new Color(0.08f, 0.12f, 0.14f);
+                Camera.backgroundColor = DeucarianEditorSurfacePalette.Background;
                 Camera.fieldOfView = 45;
                 Camera.allowHDR = false;
                 renderer.ambientColor = new Color(0.35f, 0.35f, 0.35f);
@@ -37,9 +39,11 @@ namespace Deucarian.CameraNavigation.Editor
                 renderer.AddSingleGO(Cube);
                 cubeRenderer = Cube.GetComponent<MeshRenderer>();
                 builtInMaterial = cubeRenderer.sharedMaterial;
+                grid = new CameraNavigationPreviewGrid();
+                renderer.AddSingleGO(grid.Root);
                 RefreshMaterial();
             }
-            catch { renderer.Cleanup(); throw; }
+            catch { renderer.Cleanup(); grid?.Dispose(); throw; }
         }
 
         private void RefreshMaterial()
@@ -48,6 +52,8 @@ namespace Deucarian.CameraNavigation.Editor
                 ? QualitySettings.renderPipeline : GraphicsSettings.defaultRenderPipeline;
             cubeRenderer.sharedMaterial = pipeline != null && pipeline.defaultMaterial != null
                 ? pipeline.defaultMaterial : builtInMaterial;
+            grid.RefreshMaterial(cubeRenderer.sharedMaterial);
+            Camera.backgroundColor = DeucarianEditorSurfacePalette.Background;
         }
 
         internal Texture Render(Rect rect)
@@ -71,6 +77,7 @@ namespace Deucarian.CameraNavigation.Editor
             if (disposed) return;
             disposed = true;
             renderer.Cleanup();
+            grid.Dispose();
         }
     }
 }
