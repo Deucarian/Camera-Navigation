@@ -12,7 +12,9 @@
     "Deucarian.CameraNavigation.Editor"
   ],
   "sampleAssemblies": [
-    "Deucarian.CameraNavigation.Samples.BasicNavigation"
+    "Deucarian.CameraNavigation.Samples.BasicNavigation",
+    "Deucarian.CameraNavigation.Samples.DefinitionWorkflow",
+    "Deucarian.Samples.CameraNavigation.DefinitionDeclarations"
   ],
   "testAssemblies": [
     "Deucarian.CameraNavigation.Tests.EditMode",

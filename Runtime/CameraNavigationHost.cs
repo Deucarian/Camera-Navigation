@@ -12,6 +12,8 @@ namespace Deucarian.CameraNavigation
     public sealed class CameraNavigationHost : MonoBehaviour, IDiagnosticProvider
     {
         private DeucarianCameraNavigator navigator;
+        [SerializeField] private DeucarianCameraNavigator sceneNavigator;
+        [SerializeField] private Unity.CameraPresetDefinitionCatalog definitionCatalog;
         private Dictionary<string, CameraPresetDefinition> presets;
         private readonly CancellationTokenSource lifetime = new CancellationTokenSource();
         private bool destroyed;
@@ -49,7 +51,12 @@ namespace Deucarian.CameraNavigation
 
         private void OnDestroy() { diagnosticRegistration?.Dispose(); diagnosticRegistration = null;  destroyed = true; lifetime.Cancel(); lifetime.Dispose(); navigator = null; presets?.Clear(); }
         private DiagnosticProviderRegistration diagnosticRegistration;
-        private void Awake() => diagnosticRegistration = DiagnosticProviderRegistry.Register(this);
+        private void Awake()
+        {
+            diagnosticRegistration = DiagnosticProviderRegistry.Register(this);
+            if (navigator == null && sceneNavigator != null)
+                Configure(sceneNavigator, (definitionCatalog != null ? definitionCatalog : Unity.CameraPresetDefinitionCatalog.LoadProject()).CreateRuntimeDefinitions());
+        }
         string IDiagnosticProvider.ProviderId => "camera-navigation.host." + GetInstanceID();
         string IDiagnosticProvider.DisplayName => "CameraNavigationHost";
         void IDiagnosticProvider.Collect(DiagnosticReportBuilder builder)

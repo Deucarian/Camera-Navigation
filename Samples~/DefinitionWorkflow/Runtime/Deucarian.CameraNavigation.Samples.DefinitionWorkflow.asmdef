@@ -1,0 +1,6 @@
+{
+  "name": "Deucarian.CameraNavigation.Samples.DefinitionWorkflow",
+  "references": [
+    "Deucarian.CameraNavigation"
+  ]
+}
