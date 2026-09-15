@@ -2,7 +2,8 @@
   "name": "Deucarian.CameraNavigation",
   "rootNamespace": "Deucarian.CameraNavigation",
   "references": [
-    "Deucarian.Common"
+    "Deucarian.Common",
+    "Deucarian.Diagnostics"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

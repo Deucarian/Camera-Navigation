@@ -18,7 +18,7 @@ namespace Deucarian.CameraNavigation.Editor
                 new DeucarianToolDescriptor(
                     DeucarianToolIds.CameraNavigation,
                     "Camera Navigation",
-                    "Configure reusable camera motion, framing, and navigation primitives.",
+                    "Tune and test camera controls in the preview.",
                     DeucarianControlCenterArea.Experience,
                     DeucarianCameraNavigationSettingsWindow.OpenWindow,
                     PackageId,

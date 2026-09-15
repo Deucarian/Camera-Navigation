@@ -1,5 +1,39 @@
 # Changelog
 
+## Asset workflow — Unreleased
+
+- Add an isolated ground grid beneath the real preview cube, using the active render pipeline and shared editor colors. Viewer Navigation inherits the same preview; framing bounds and scene objects remain unchanged.
+
+- Bundle controls and framing defaults matching runtime values, replace arbitrary-first discovery with canonical project/bundled resolution and retain framing selection across redraws.
+
+## [0.4.0] - Unreleased
+
+- Add typed reusable definition authoring and/or scoped Inspector components that share the existing C# service behavior.
+- Include a playable Definition Workflow sample with configured hosts, short callers and usage documentation.
+- Align declared package dependencies with the definition-authoring development wave.
+
+- Render an actual Unity Cube in an isolated preview scene, using the active pipeline's default material and the existing smooth navigation controls.
+- Simplify the importable scene to one Cube and declare its URP shader dependency; document pipeline setup separately from package installation.
+- Replace the placeholder sample with an assigned camera, visible reference geometry, editable motion settings and working pose/framing commands.
+- Declare the built-in IMGUI module used only by sample controls; keep input-system ownership outside the navigator.
+
+
+## [0.3.0] - 2026-09-11
+
+- Replace the illustrative auto-rotation with an interactive isolated camera driven by the runtime Orbit/Fly controllers, wheel damping, framing, and transitions.
+- Apply live controls to the same preview camera, support focused keyboard/pointer input, and release all owned objects and input when closing the page.
+- Add an explicit manual transition clock for isolated Edit Mode previews and deterministic hosts; automatic runtime behavior stays the default.
+- Require Editor 1.11.0 for camera-projected shared preview geometry.
+- Match the visible target framing when animated navigation switches perspective/orthographic projection, using the same top-down policy as Viewer Navigation.
+- Fix default wheel zoom collapsing to the pivot: Orbit and Fly now share a bounded, reversible distance scale per detent (about 33% inward at defaults), with fractional/accumulated input and existing smoothing/minimums preserved.
+- Normalize preview pointer/wheel units like the runtime adapter; preserve the current pose when gestures interrupt framing and avoid idle preview geometry rebuilds.
+- Integrate the typed preset/awaitable move APIs with the manual clock, preserving cancellation generations and completion callbacks; remove ignored-root `Samples~` metadata that caused asset-refresh warnings.
+
+## [0.2.15] - 2026-09-11
+
+- Use a native camera navigation form and isolated spatial specimen; retain target selection, existing settings and per-page state.
+- Require Editor 1.10.6 for the shared native controls, typography, responsive layouts and accessible interaction states.
+
 ## [0.2.14] - 2026-09-09
 
 ### Changed

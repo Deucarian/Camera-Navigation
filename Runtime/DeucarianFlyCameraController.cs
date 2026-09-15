@@ -25,7 +25,8 @@ namespace Deucarian.CameraNavigation
                 input,
                 deltaTime,
                 controls,
-                MinimumWheelZoomReferenceDistance);
+                Mathf.Max(MinimumWheelZoomReferenceDistance,
+                    camera != null ? camera.nearClipPlane * 4f : 0f));
         }
 
         public void Apply(
@@ -50,7 +51,7 @@ namespace Deucarian.CameraNavigation
             {
                 ApplyRotation(camera, input.Look, controls);
                 ApplyMovement(camera, input, deltaTime, controls);
-                ApplyZoomInput(input.Zoom, wheelZoomReferenceDistance, controls);
+                ApplyZoomInput(camera, input.Zoom, wheelZoomReferenceDistance, controls);
             }
 
             ApplyZoomSmoothing(camera, deltaTime, controls);
@@ -111,6 +112,7 @@ namespace Deucarian.CameraNavigation
         }
 
         private void ApplyZoomInput(
+            Camera camera,
             float zoomDelta,
             float wheelZoomReferenceDistance,
             IDeucarianCameraNavigationControls controls)
@@ -125,11 +127,14 @@ namespace Deucarian.CameraNavigation
                 : DeucarianCameraNavigationControls.DefaultWheelZoomStep;
             float zoomSensitivity =
                 controls != null ? controls.FlyZoomSensitivity : 1f;
-            float referenceDistance =
-                Mathf.Max(MinimumWheelZoomReferenceDistance, wheelZoomReferenceDistance);
-            wheelZoom.AddToTarget(
-                wheelZoom.Current,
-                zoomDelta * referenceDistance * zoomStep * zoomSensitivity);
+            if (!IsFinite(wheelZoomReferenceDistance)) return;
+            float minimum = Mathf.Max(
+                controls != null ? controls.OrbitMinimumDistance : DeucarianCameraNavigationControls.DefaultOrbitMinimumDistance,
+                camera.nearClipPlane * (controls != null ? controls.OrbitNearClipDistanceMultiplier :
+                    DeucarianCameraNavigationControls.DefaultOrbitNearClipDistanceMultiplier));
+            wheelZoom.AddDistanceTarget(
+                Mathf.Max(minimum, wheelZoomReferenceDistance), zoomDelta, zoomStep, zoomSensitivity,
+                minimum, Mathf.Max(minimum, 1000000f));
         }
 
         private void ApplyZoomSmoothing(

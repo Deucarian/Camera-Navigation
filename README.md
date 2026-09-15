@@ -1,12 +1,26 @@
 # Deucarian Camera Navigation
 
+## Asset selection and project defaults
+
+The editor preview uses the canonical project controls/framing assets when present, otherwise the bundled runtime-equivalent defaults. Package defaults are read-only: use Create for canonical project defaults or Customize for a named copy. Choose searches Assets and installed Packages. Changing a draft or preview camera does not automatically assign it to scene components.
+
+## Typed definition workflow
+
+The typed preset holds framing defaults; the scene supplies the camera and target bounds. Both entry points use the same navigator.
+
+Start with the [Definition Workflow walkthrough](Documentation~/DefinitionWorkflow.md).
+Import **Definition Workflow** in Package Manager for a configured sample scene
+and short caller scripts. Definitions can be edited as assets or editable C# declarations; generated keys
+work in code and Inspector dropdowns.
+
+
 ## What this is
 
 Deucarian Camera Navigation provides reusable Unity camera pose, framing, transition, orbit, fly, top-down, and waypoint movement primitives. It is input-agnostic by default: projects feed normalized input structs into the controllers or provide their own input adapters.
 
 Package ID: `com.deucarian.camera-navigation`
 
-Current package version: `0.2.14`.
+Current package version: `0.4.0`.
 
 ## When to use it
 
@@ -116,11 +130,47 @@ small models zoom much closer while large models retain a stable scale-aware
 safety floor. Orthographic navigation changes `orthographicSize` and does not
 move the camera through its pivot.
 
+## Interactive editor preview
+
+The Camera Navigation page uses the real Orbit/Fly controllers and camera framing
+policy in an isolated preview scene. No Play Mode is needed, and your scene cameras
+and saved scene remain unchanged. Drag to orbit/look, middle-drag or Shift-drag to
+pan, and scroll to zoom. Click inside the preview, then use WASD and Q/E to move;
+Shift boosts and Ctrl slows movement. Escape or moving focus outside the preview
+releases its input. Settings edits apply to subsequent input without recreating the
+camera. **Frame target** and **Reset view** move smoothly from the current pose;
+new input interrupts an active move. Wheel zoom keeps damping between wheel events.
+
+Wheel strength is a distance-relative per-detent scale shared by Orbit and Fly.
+The unchanged default sensitivity values now settle about 33% closer per inward
+detent instead of clamping to the pivot. Lower strength retains its ordinary
+inward fraction; higher strength softens toward a 35% maximum. Fractional detents
+compose and opposite detents reverse the scale until a distance bound is reached.
+Orbit retains its reference-scale and near-clip floor; Fly retains forward motion
+with an absolute/near-clip floor on the supplied reference distance.
+
+Preview gestures use panel-space pointer movement scaled by 0.1 and three wheel
+lines per normalized detent. Optional live `pointerDeltaScale` and
+`scrollNormalization` delegates let integrations match their input profile
+without depending on a particular input package. The focused editor shortcuts
+are independent of a runtime consumer's custom key/button bindings.
+
+Editor integrations can compose `DeucarianCameraNavigationPreview` from the
+editor-only assembly. Dispose it when the page closes and call `StopMotion` when
+the page is hidden. Its geometry and controls use Editor 1.11.0; it does not create
+render textures, modify scene cameras, or enable global input actions.
+
+`DeucarianCameraNavigator.SetManualUpdates(true)` opts a host into explicit
+`Tick(deltaTime)` calls, including Edit Mode. Manual and coroutine clocks are
+mutually exclusive. Switching clock cancels the active move; invalid/zero ticks
+do nothing. Normal runtime consumers keep automatic coroutine updates by default.
+
 ## Integrations
 
 Works with:
 
 - `com.deucarian.common` for approved shared runtime primitives.
+- `com.deucarian.diagnostics` for sanitized typed-host status.
 - `com.deucarian.editor` for the shared editor-only Camera Navigation settings
   surface.
 
@@ -139,7 +189,9 @@ Does not own:
 ## Troubleshooting
 
 - If `MoveToTopDown` does nothing, confirm the navigator has a target camera or the scene has a tagged `MainCamera`.
-- If movement snaps, check whether the scene is in Edit Mode or the motion settings calculate a zero-duration transition.
+- If movement snaps in a custom host, check for a zero-duration transition or an
+  explicit `animate: false`. Edit Mode hosts need `SetManualUpdates(true)` plus
+  `Tick(deltaTime)`; the package preview already supplies that clock.
 - If framing looks too tight, pass a larger padding value to `DeucarianCameraFraming` helpers before moving to the pose.
 - If automatic framing should pan and zoom without rotating, set the canonical
   framing asset's rotation policy to `Preserve Current Camera Rotation`.
@@ -165,3 +217,13 @@ See [AGENTS.md](AGENTS.md) for ownership, dependency, and validation guidance.
 ## License
 
 See [LICENSE.md](LICENSE.md).
+
+## Simple typed usage
+
+See [Simple usage](Documentation~/SimpleUsage.md) for the short caller, Inspector selections and one-time scoped setup.
+
+## Preview and sample rendering
+
+The editor preview renders an isolated Unity Cube with the same navigation controllers; dragging, zooming and profile edits never move a scene camera. It uses the active render pipeline's default material.
+
+The importable `BasicNavigation.unity` example also uses one Cube. Its purple material uses URP, which this package declares as a dependency. Assign a URP pipeline asset in Graphics Settings (and check Quality overrides) before running the sample. Installing URP alone does not change a project's active renderer. Navigation code itself remains pipeline-agnostic.

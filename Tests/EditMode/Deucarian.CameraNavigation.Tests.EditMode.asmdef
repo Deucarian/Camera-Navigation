@@ -5,7 +5,8 @@
     "Deucarian.Editor",
     "Deucarian.CameraNavigation",
     "Deucarian.CameraNavigation.Editor",
-    "Deucarian.Common"
+    "Deucarian.Common",
+    "Deucarian.Diagnostics"
   ],
   "includePlatforms": [
     "Editor"
